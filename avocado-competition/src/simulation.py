@@ -23,12 +23,12 @@ class Simulation:
         st_dev, 
         pct_ppl_really_like = 0.0, 
         pct_ppl_really_dislike = 0.0, 
-        assigned_guacs = 20, 
+        num_guacs_per_voter = 20, 
         fullness_factor = False
         ):
 
         #assigned guacs per person
-        self.assigned_guacs = assigned_guacs
+        self.num_guacs_per_voter = num_guacs_per_voter
 
         #dataframe with guacs and objective voting
         self.guac_df = guac_df
@@ -60,7 +60,7 @@ class Simulation:
         #winners
         self.winner = None
         self.winners = []
-        
+
         self.true_winner = self.guac_df.sort_values(by=['objective_score'], ascending=False).iloc[0]['id']
 
 
@@ -135,7 +135,7 @@ class Simulation:
 
         #The fullness factor is fit with a straight line from 0 at the first guac to -2 at the last guac
         if self.fullness_factor:
-            ff = (-2.0/self.assigned_guacs)*incremental_number
+            ff = (-2.0/self.num_guacs_per_voter)*incremental_number
             mean += ff
 
         if random_seed:
@@ -213,7 +213,7 @@ class Simulation:
             this_col = f"subjective_score_{persona}"
 
             #select a subset of guacs to score
-            random_sample_df = self.results_df[['id', 'objective_score']].sample(n=self.assigned_guacs, replace=False)
+            random_sample_df = self.results_df[['id', 'objective_score']].sample(n=self.num_guacs_per_voter, replace=False)
 
             #add incremendal number for fullness score
             random_sample_df['incremendal_number'] = range(1, len(random_sample_df)+1)

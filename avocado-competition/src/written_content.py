@@ -63,7 +63,7 @@ STORY = {
     ], 
     "simulation_2": [
         """In this scenario townpeople are asked to vote on a subset of guacamoles. 
-        These will be shuffled before being assigned to each person. 
+        As before, these will be shuffled before being assigned to each person. 
         The winning guacamole will be determined with a condorcet method as the one who wins a 
         majority of the votes in every head-to-head election 
         against each of the other candidates (a candidate preferred by more voters than any others, if it exists).""", 

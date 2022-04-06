@@ -397,7 +397,7 @@ def voters_types_and_num_guacs(key, guac_counts=False):
             """
             Select the number of guacamoles for each voter
             """,
-            value=20,
+            value=10,
             min_value=0,
             max_value=20,
             key=key+"number_guacs_per_voter")

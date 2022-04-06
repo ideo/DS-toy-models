@@ -76,10 +76,12 @@ if st.session_state['first_simulate']:
 
     pct_ppl_really_like, pct_ppl_really_dislike, num_guacs_per_voter = lg.voters_types_and_num_guacs(section_title, guac_counts = True)
 
-
-# lg.animate_results(sim1, key=section_title)
-# if st.session_state[f"{section_title}_keep_chart_visible"]:
-#     lg.success_message(section_title, sim1.sum_success)
+    sim2 = Simulation(guac_df, num_townspeople, st_dev, 
+                pct_ppl_really_like=pct_ppl_really_like, 
+                pct_ppl_really_dislike=pct_ppl_really_dislike, 
+                num_guacs_per_voter=num_guacs_per_voter, 
+                fullness_factor=True)
+    sim2.simulate(winner_metric='condorcet')
 
 
 # st.markdown("---")
