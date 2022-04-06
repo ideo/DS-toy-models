@@ -7,7 +7,7 @@ from .guacamoles import Guacamoles
 # import pandas as pd
 # import time
 
-from .written_content import STORY, INSTRUCTIONS, ABOUT_THE_SIMULATION#, SUCCESS_MESSAGES
+from .written_content import STORY, ABOUT_THE_SIMULATION#INSTRUCTIONS, SUCCESS_MESSAGES
 #from config import ENTRANTS#, COLORS, DEMO_CONTEST
 # from .simulation import Simulation
 
@@ -59,19 +59,19 @@ def write_story(section_title):
         st.write(paragraph)
 
 
-def write_instructions(section_title, st_col=None):
-    """This function writes instructions for when a selection needs to
-    be made.
+# def write_instructions(section_title, st_col=None):
+#     """This function writes instructions for when a selection needs to
+#     be made.
 
-    Args:
-        section_title (str): title of the section that needs instructions
-        st_col (streamlit column, optional): whether the instructions should be placed on a specific column. Defaults to None.
-    """
-    for paragraph in INSTRUCTIONS[section_title]:
-        if st_col is not None:
-            st_col.caption(paragraph)
-        else:
-            st.caption(paragraph)
+#     Args:
+#         section_title (str): title of the section that needs instructions
+#         st_col (streamlit column, optional): whether the instructions should be placed on a specific column. Defaults to None.
+#     """
+#     for paragraph in INSTRUCTIONS[section_title]:
+#         if st_col is not None:
+#             st_col.caption(paragraph)
+#         else:
+#             st.caption(paragraph)
 
 
 def sidebar():
@@ -81,8 +81,7 @@ def sidebar():
     st.sidebar.subheader("Simulation Parameters")
     
     keep_out = """
-        HEY! What are you doing in here? This area is off limits! Only Fra and 
-        Joe are allowed in here! Get outta here ya meddling kids!
+        In case you REALLY want to play more with the numbers....
     """
     st.sidebar.write(keep_out)
     
@@ -365,45 +364,39 @@ def choose_scenario(num_guacs, scenarios):
 # #     return y_field
 
 
-# def types_of_voters(key):
-#     col1, col2, col3 = st.columns(3)
-#     pepe = col1.slider(
-#         """
-#         What percentage of people in town are like Perky Pepe, who loves 
-#         guacamole so much he'll have a hard time giving anyone a bad score?
-#         """,
-#         value=10,
-#         min_value=0,
-#         max_value=30,
-#         format="%g%%",
-#         key=key+"pepe")
+def types_of_voters(key):
+    col1, col2, col3 = st.columns(3)
+    ppl_neutral = col1.slider(
+        """
+        Neutral people
+        """,
+        value=10,
+        min_value=0,
+        max_value=30,
+        format="%g%%",
+        key=key+"ppl_neutral")
 
-#     fra = col2.slider(
-#         """
-#         What percentage of people in town are like Finicky Francisca, who
-#         thinks all guacamole is basically mush and won't score any entry too high?
-#         """,
-#         value=8,
-#         min_value=0,
-#         max_value=30,
-#         format="%g%%",
-#         key=key+"fra")
+    ppl_really_like = col2.slider(
+        """
+        People who really like guacamole
+        """,
+        value=8,
+        min_value=0,
+        max_value=30,
+        format="%g%%",
+        key=key+"ppl_really_like")
 
-#     carlos = col3.slider(
-#         """
-#         What percentage of people in town are friends with Cliquey Carlos, and
-#         will score high guacamole as high as possible no matter what?
-#         """,
-#         value=12,
-#         min_value=0,
-#         max_value=30,
-#         format="%g%%",
-#         key=key+"carlos")
+    ppl_really_dislike = col3.slider(
+        """
+        People who really dislike guacamole
+        """,
+        value=12,
+        min_value=0,
+        max_value=30,
+        format="%g%%",
+        key=key+"ppl_really_dislike")
 
-#     pepe /= 100
-#     fra /= 100
-#     carlos /= 100
-#     return pepe, fra, carlos
+    return ppl_neutral/100, ppl_really_like/100, ppl_really_dislike/100
 
 
 # def num_people_and_guac_per_person_slider():

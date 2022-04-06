@@ -47,7 +47,10 @@ st.markdown("---")
 st.subheader("Time to Taste and Vote!")
 section_title = "simulation_1"
 lg.write_story(section_title)
-# lg.write_instructions(section_title)
+
+ppl_neutral, ppl_really_like, ppl_really_dislike = lg.types_of_voters(section_title)
+
+
 sim1 = Simulation(guac_df, num_townspeople, st_dev, fullness_factor=True)
 sim1.simulate(winner_metric='condorcet')
 

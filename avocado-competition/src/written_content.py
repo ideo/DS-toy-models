@@ -1,45 +1,48 @@
-from re import M
 
 ABOUT_THE_SIMULATION = {
     'Goal': [
         """This simulation uses a condorcet method to determine the winner of a guacamole contest. 
-        The goal of this exercise is to show that the winner nominated by having each judge tasting each guacamole can be recovered even when 
-        judges are assigned only a subset of contenders.""", 
-        """Limiting how many entries each judge has to taste could create opportunities around:""", 
+        The goal of this exercise is to show that the winner nominated by having each voter tasting each guacamole can be recovered even when 
+        voters are assigned only a subset of contenders.""", 
+        """Limiting how many entries each voter has to taste could create opportunities around:""", 
         "- Every contestant having a fairer shot at winning, expecially the less famous ones.", 
         "- Mitigating natural behaviors (e.g., the fuller you get and the less excited you are to eat more guac.)", 
         "- Extending the competition to more contestants.", 
         "- ...?"
     ], 
     'True Score': [
-        """In this simulation you'll be able to play with how the different guacs compare to one another and the judges' characters.
-        Specifically, you'll be able to choose between 3 different scenarios (One Clear Winner, A Close Call, A Lot Of Contenders), and you
-        will be able to select what kind of judges you'd like to have in the competitions between fair judges and judges that tend to upvote/downvote.""", 
-        "Let's start by selecting one of the scenarios below. Throughout the simulation, we'll refer to these scores as the 'true score' (TS)."
+        """In this simulation you'll be able to play with how the different guacs compare to one another and the voters' characters.
+        Specifically, you'll be able to choose between 3 different scenarios (One Clear Winner, A Close Call, A Lot Of Contenders), and between 
+        neutral voters and/or voters who really like/dislike guacamole and thus tend to upvote/downvote.""", 
+        """Let's start by selecting one of the scenarios below. Throughout the simulation, we'll refer to these scores as the 'true score' (TS).
+        In green is the guacamole with the highest TS."""
+        
     ], 
     'How Voting Works': [
-        """For fair judges votes are sampled from a normal distribution centered at TS. 
-        For judges that tend to upvote (downvote), votes are sampled from a normal distribution centered at TS+2 (TS-2).
-        For all judges we assume a standard deviation of 2.""", 
-        """Finally, we assume that, as judges get full, they'll start downvoting. 
+        """We simulate different voters' characters as follows. For neutral voters, votes are sampled from a normal distribution centered at TS. 
+        For voters who really like (dislike) guacamole, votes are sampled from a normal distribution centered at TS+2 (TS-2).
+        For all voters we assume a standard deviation of 2.""", 
+        """Finally, we assume that, as voters get full, they'll start downvoting. 
         This is achieved via a fullness factor that is further subtracted from TS. 
-        This factor decreases from 0 (at the beginning) to -2 (and the end).""", 
+        This factor decreases from 0 (when tasting begins) to -2 (when tasting ends).""", 
         "Note that all these choices are purely illustrative and are meant to give you a flavor for the variety of effects you could include."
         ],
 
     'Let The Story Begin': [
         "But enough with the setup. Let the story begin."
         ]
-
-
-}
+    }
 
 
 STORY = {
     "Introduction":  [
-        "Welcome to the town of Sunnyvale, whose citizens are obsessed with all things avocado. They put them on their eggs in the morning, in their tacos midday, and transform them into guacamole for the evening. While everyone agrees that guacamole is the best use of their beloved avocado, no one can agree whose guacamole recipe is the best.",
-        "Mayor Michelada suggests to have a contest to settle once and for all on who can make the best guac. The town will gather, try each one, and vote for the best!",
-        "The day of the competition, the whole town shows up. The entrants, twenty people with big bowls of their family’s pride and joy, gather in the center of the plaza.",
+        """Welcome to the town of Sunnyvale, whose citizens are obsessed with all things avocado.
+         They put them on their eggs in the morning, in their tacos midday, and transform them into guacamole for the evening. 
+         While everyone agrees that guacamole is the best use of their beloved avocado, no one can agree whose guacamole recipe is the best.""",
+        """Mayor Michelada suggests to have a contest to settle once and for all on who can make the best guac. 
+        The town will gather, try each one, and vote for the best!""",
+        """The day of the competition the whole town shows up to participate in tasting and voting. The entrants, 
+        twenty people with big bowls of their family’s pride and joy, gather in the center of the plaza.""",
     ],
 
     "Simulation Set Up": [
@@ -47,8 +50,12 @@ STORY = {
     ],
 
     "simulation_1": [
-        "For illustration purposes, we'll start by giving each judge all guacs and ask them to vote. The winning guac will be the one with the highest score."
-    ],
+        """To start, we'll ask townpeople (our voters) to vote on each guacamole. These will be shuffled before being assigned to each person. 
+        The winning guacamole will be the one with the highest score. """, 
+        """Please select the percentages of townpeople characters you'd like to have between neutral, 
+        people who really like guacamole, and people who really dislike guacamole."""
+    ]
+}
 
 #     "transition_1_to_2":    [
 #         "The last contest worked well because everyone who participated got to try every single guacamole entrant. But is that realistic? Over two hundred people showed up to join in the fun! Can we have expected that those who entered teh contest made enough guac to feed that many people? Let’s imagine another version of these events.",
@@ -96,19 +103,19 @@ STORY = {
 #     # "Conclusion 2":  [
 #     #     "Introducing better/worse ingredients leads to clearer winners, even when not everyone tries all the guacs."
 #     # ]
-}
+#}
 
 
-INSTRUCTIONS = {
-    "Guac God": [
-        "Choose a scenario to be used throughout this simulation.",
-    ],
+# INSTRUCTIONS = {
+#     "Guac God": [
+#         "Choose a scenario to be used throughout this simulation.",
+#     ],
 
-    "simulation_1": [
-        "We start by assuming that every taster is fair. ", 
-        "Under this assumption, we'll sample each taster score from a normal distribution centered at the Guac God given mean and with a standard deviation of 1."
-        "The winning guac will be the one with the highest score."
-    ],
+#     "simulation_1": [
+#         "We start by assuming that every taster is fair. ", 
+#         "Under this assumption, we'll sample each taster score from a normal distribution centered at the Guac God given mean and with a standard deviation of 1."
+#         "The winning guac will be the one with the highest score.", 
+#     ],
 
 #     "simulation_2": [
 #         "In our second contest, try limiting how many guacamoles each taster gets to try. Like before, tasters will taste in random orders and get slightly less generous with their scores as they get full."
@@ -170,4 +177,4 @@ INSTRUCTIONS = {
 #         ]
 #     },
     
-}
+#}

@@ -46,7 +46,7 @@ class Simulation:
         self.st_dev = st_dev
 
         #count of people that tend to upvote, downvote, and be reasonable
-        self.num_upvoting, self.num_downvoting, self.num_reasonable=self.get_personas_counts()
+        self.num_ppl_really_like, self.num_ppl_really_dislike, self.num_ppl_neutral=self.get_personas_counts()
         
         #dictionary with each persona mean offset and standard devitaion
         self.personas = self.create_personas()
@@ -72,15 +72,15 @@ class Simulation:
         """
 
         #number of people that tend to score higher
-        num_upvoting = round(self.num_townspeople * self.frac_upvoting)
+        num_ppl_really_like = round(self.num_townspeople * self.frac_upvoting)
 
         #number of people that tend to score lower
-        num_downvoting = round(self.num_townspeople * self.frac_downvoting)
+        num_ppl_really_dislike = round(self.num_townspeople * self.frac_downvoting)
 
-        #num_reasonable tend to score people fairly
-        num_reasonable = self.num_townspeople - num_upvoting - num_downvoting
+        #num_ppl_neutral tend to score people fairly
+        num_ppl_neutral = self.num_townspeople - num_ppl_really_like - num_ppl_really_dislike
         
-        return num_upvoting, num_downvoting, num_reasonable
+        return num_ppl_really_like, num_ppl_really_dislike, num_ppl_neutral
 
 
     def create_personas(self):
@@ -93,21 +93,21 @@ class Simulation:
         #create the personas:
         personas = {}
         counter = 0
-        for n in range(self.num_reasonable):
+        for n in range(self.num_ppl_neutral):
             this_persona = Townsperson(counter, self.st_dev, 'reasonable')
             personas[this_persona.number] = {}
             personas[this_persona.number]['mean_offset'] = this_persona.mean_offset
             personas[this_persona.number]['std'] = this_persona.std
             counter+=1
 
-        for n in range(self.num_upvoting):
+        for n in range(self.num_ppl_really_like):
             this_persona = Townsperson(counter, self.st_dev, 'upvoting')
             personas[this_persona.number] = {}
             personas[this_persona.number]['mean_offset'] = this_persona.mean_offset
             personas[this_persona.number]['std'] = this_persona.std
             counter+=1
 
-        for n in range(self.num_downvoting):
+        for n in range(self.num_ppl_really_dislike):
             this_persona = Townsperson(counter, self.st_dev, 'downvoting')
             personas[this_persona.number] = {}
             personas[this_persona.number]['mean_offset'] = this_persona.mean_offset
