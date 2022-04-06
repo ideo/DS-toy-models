@@ -6,7 +6,7 @@ import src.logic as lg
 # from src.story import STORY
 from src.simulation import Simulation
 # from src.simulation_unknown_best import Simulation_unknown_best
-# from src.tuning import tune_simulation, wrap_my_head_around_it
+from src.tuning import wrap_my_head_around_it
 
 
 # wrap_my_head_around_it()
@@ -42,11 +42,11 @@ st.subheader("Welcome to Sunnyvale")
 lg.write_story("Introduction")
 
 
-st.subheader("Time to Taste and Vote!")
+st.subheader("Scenario1: Tasting and Voting for All")
 section_title = "simulation_1"
 lg.write_story(section_title)
 
-pct_ppl_really_like, pct_ppl_really_dislike = lg.types_of_voters(section_title)
+pct_ppl_really_like, pct_ppl_really_dislike, dummy = lg.voters_types_and_num_guacs(section_title)
 
 #First simulation, everyone gets everything
 sim1 = Simulation(guac_df, num_townspeople, st_dev, 
@@ -56,7 +56,26 @@ sim1 = Simulation(guac_df, num_townspeople, st_dev,
 sim1.simulate(winner_metric='sum')
 
 st.markdown("---")
+
+#add a session state, to have the text continuing 
+#after the first time the simulation is started
+if 'first_simulate' not in st.session_state.keys():
+    st.session_state['first_simulate'] = False
+
+
 lg.show_winner(sim1)
+
+if st.session_state['first_simulate']:
+    #write the conclusion
+    lg.write_story('simulation_1_conclusion')
+
+    #moving to the simulation where only a subset of guacamoles is assigned to each voter.
+    st.subheader("Scenario2: Tasting and Voting for a Subset")
+    section_title = "simulation_2"
+    lg.write_story(section_title)
+
+    pct_ppl_really_like, pct_ppl_really_dislike, num_guacs_per_voter = lg.voters_types_and_num_guacs(section_title, guac_counts = True)
+
 
 # lg.animate_results(sim1, key=section_title)
 # if st.session_state[f"{section_title}_keep_chart_visible"]:

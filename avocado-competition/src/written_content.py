@@ -6,16 +6,16 @@ ABOUT_THE_SIMULATION = {
         voters are assigned only a subset of contenders.""", 
         """Limiting how many entries each voter has to taste could create opportunities around:""", 
         "- Every contestant having a fairer shot at winning, expecially the less famous ones.", 
-        "- Mitigating natural behaviors (e.g., the fuller you get and the less excited you are to eat more guac.)", 
+        "- Mitigating natural behaviors, such as, the fuller you get and the less excited you are to eat more (and the worse your vote is going to get).", 
         "- Extending the competition to more contestants.", 
         "- ...?"
     ], 
     'True Score': [
         """In this simulation you'll be able to play with how the different guacs compare to one another and the voters' characters.
-        Specifically, you'll be able to choose between 3 different scenarios (One Clear Winner, A Close Call, A Lot Of Contenders), and between 
+        Specifically, you'll be able to choose between 3 different configurations (One Clear Winner, A Close Call, A Lot Of Contenders), and between 
         neutral voters and/or voters who really like/dislike guacamole and thus tend to upvote/downvote.""", 
-        """Let's start by selecting one of the scenarios below. Throughout the simulation, we'll refer to these scores as the 'true score' (TS).
-        In green is the guacamole with the highest TS. We'll refer to this as the true winner."""
+        """Let's start by selecting one of the configurations below. Throughout the simulation, we'll refer to the scores in the figure as the 'true score' (TS).
+        In green is the guacamole with the highest TS. We'll refer to this guacamole as the true winner."""
         
     ], 
     'How Voting Works': [
@@ -39,19 +39,39 @@ STORY = {
         """Welcome to the town of Sunnyvale, whose citizens are obsessed with all things avocado.
          They put them on their eggs in the morning, in their tacos midday, and transform them into guacamole for the evening. 
          While everyone agrees that guacamole is the best use of their beloved avocado, no one can agree whose guacamole recipe is the best.""",
-        """Mayor Michelada suggests to have a contest to settle once and for all on who can make the best guac. 
+        """The town mayor suggests to have a contest to settle once and for all on who can make the best guac. 
         The town will gather, try each one, and vote for the best!""",
-        """The day of the competition the whole town shows up to participate in tasting and voting. The entrants, 
+        """On the day of the competition the whole town shows up to participate in tasting and voting. The entrants, 
         twenty people with big bowls of their family’s pride and joy, gather in the center of the plaza.""",
     ],
 
     "simulation_1": [
-        """To start, we'll ask townpeople (our voters) to vote on each guacamole. These will be shuffled before being assigned to each person. 
+        """In this scenario townpeople (our voters) are asked to vote on each guacamole. These will be shuffled before being assigned to each person. 
         The winning guacamole will be the one with the highest score. """, 
-        """Please select the percentages of townpeople characters you'd like to have between 
-        people who really like/dislike guacamole.
-        Any remaining percentage will be assigned to neutral voters."""
-    ]
+        """Select the percentages of townpeople characters below.
+        The remaining percentage will be assigned to neutral voters."""
+    ], 
+    "simulation_1_conclusion": [
+        """Assuming there's a true winner among the contestants, this can be recovered 
+        even by varying the percentages of townpeople characters to the extremes, 
+        and despite the fullness factor.
+        This is likely due to a combination of factors, including but not limited to 
+        1) the shuffling of the guacamoles before assigning them to each voter, 
+        2) the chosen value of the standard deviation, 
+        3) the number of townpeople voting, 
+        4) the number of contestants."""
+    ], 
+    "simulation_2": [
+        """In this scenario townpeople are asked to vote on a subset of guacamoles. 
+        These will be shuffled before being assigned to each person. 
+        The winning guacamole will be determined with a condorcet method as the one who wins a 
+        majority of the votes in every head-to-head election 
+        against each of the other candidates (a candidate preferred by more voters than any others, if it exists).""", 
+        """Select the percentages of townpeople characters below (the remaining percentage will be assigned to neutral voters), 
+        together with the number of guacamole you'd like to assign to each voter."""
+    ], 
+
+
 }
 
 #     "transition_1_to_2":    [

@@ -122,7 +122,7 @@ def choose_scenario(num_guacs, scenarios):
 
     #create selection list on left
     scenario = col1.radio(
-        "Chose a scenario", 
+        "Chose a configuration", 
         options=scenarios,
         )
 
@@ -364,12 +364,17 @@ def choose_scenario(num_guacs, scenarios):
 # #     return y_field
 
 
-def types_of_voters(key):
+def voters_types_and_num_guacs(key, guac_counts=False):
     col1, col2 = st.columns(2)
+    num_guacs_per_voter = 0
+
+    if guac_counts:
+        col1, col2, col3 = st.columns(3)
+    
 
     pct_ppl_really_like = col1.slider(
         """
-        People who really like guacamole
+        Select the % of people who really like guacamole
         """,
         value=30,
         min_value=0,
@@ -379,7 +384,7 @@ def types_of_voters(key):
 
     pct_ppl_really_dislike = col2.slider(
         """
-        People who really dislike guacamole
+        Select the % of people who really dislike guacamole
         """,
         value=30,
         min_value=0,
@@ -387,7 +392,17 @@ def types_of_voters(key):
         format="%g%%",
         key=key+"ppl_really_dislike")
 
-    return pct_ppl_really_like, pct_ppl_really_dislike
+    if guac_counts:
+        num_guacs_per_voter = col3.slider(
+            """
+            Select the number of guacamoles for each voter
+            """,
+            value=20,
+            min_value=0,
+            max_value=20,
+            key=key+"number_guacs_per_voter")
+
+    return pct_ppl_really_like, pct_ppl_really_dislike, num_guacs_per_voter
 
 
 # def num_people_and_guac_per_person_slider():
@@ -493,10 +508,12 @@ def show_winner(sim):
     col1, col2, col3 = st.columns(3)
 
     #Showing output once the simulation is ran
-    if start_btn:
+    if start_btn:        
         col1.image(f"images/guac_icon_0.png", width=100)
         col2.metric(f"The winner is: ", sim.winner)
         col3.metric(f"The true winner is: ", sim.true_winner)
+        
+        st.session_state['first_simulate'] = True
 
     return start_btn
 
