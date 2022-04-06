@@ -91,7 +91,7 @@ def sidebar():
         max_value=500,
         step=10)
     st_dev = st.sidebar.number_input("What is the st. dev. of their randomly generated scores?",
-        value=1.0,
+        value=2.0,
         min_value=0.1,
         max_value=5.0,
         step=0.1
@@ -365,38 +365,29 @@ def choose_scenario(num_guacs, scenarios):
 
 
 def types_of_voters(key):
-    col1, col2, col3 = st.columns(3)
-    ppl_neutral = col1.slider(
-        """
-        Neutral people
-        """,
-        value=10,
-        min_value=0,
-        max_value=30,
-        format="%g%%",
-        key=key+"ppl_neutral")
+    col1, col2 = st.columns(2)
 
-    ppl_really_like = col2.slider(
+    pct_ppl_really_like = col1.slider(
         """
         People who really like guacamole
         """,
-        value=8,
+        value=30,
         min_value=0,
-        max_value=30,
+        max_value=50,
         format="%g%%",
         key=key+"ppl_really_like")
 
-    ppl_really_dislike = col3.slider(
+    pct_ppl_really_dislike = col2.slider(
         """
         People who really dislike guacamole
         """,
-        value=12,
+        value=30,
         min_value=0,
-        max_value=30,
+        max_value=50,
         format="%g%%",
         key=key+"ppl_really_dislike")
 
-    return ppl_neutral/100, ppl_really_like/100, ppl_really_dislike/100
+    return pct_ppl_really_like, pct_ppl_really_dislike
 
 
 # def num_people_and_guac_per_person_slider():
@@ -490,28 +481,24 @@ def types_of_voters(key):
 #         st.button("Next Contestant", on_click=increment_entrant_num)
     
 
-# def next_contestant(sim):
-#     col1, col2, col3 = st.columns(3)
-#     entrant_num = st.session_state["entrant_num"]
-#     col1.image(f"img/guac_icon_{entrant_num}.png", width=100)
+def show_winner(sim):
+    col1, col2, col3 = st.columns(3)
 
-#     name =  sim.guac_df.loc[entrant_num]['Entrant']
-#     score = sim.guac_df.loc[entrant_num]['Objective Ratings']
-#     score = int(round(score))
-#     col2.markdown(f"**{name}'s Guacamole**")
-#     col2.metric("Your Assesment:", score)
+    #Creating a button to start the simulation
+    start_btn = col1.button("Simulate")
+    
+    #adding some space between the simulate button and the output
+    st.write("")
+    st.write("")
+    col1, col2, col3 = st.columns(3)
 
-#     start_btn = col3.button("Taste and Score")
+    #Showing output once the simulation is ran
+    if start_btn:
+        col1.image(f"images/guac_icon_0.png", width=100)
+        col2.metric(f"The winner is: ", sim.winner)
+        col3.metric(f"The true winner is: ", sim.true_winner)
 
-#     if start_btn:
-#         columns = st.columns(5)
-#         for ii, col in enumerate(columns):
-#             person = sim.townspeople[ii]
-#             score = person.ballot.loc[entrant_num]["Subjective Ratings"]
-#             score = int(round(score))
-#             col.metric(f"Taster No. {person.number}", score)
-
-#     return start_btn
+    return start_btn
 
 
 # def increment_entrant_num():

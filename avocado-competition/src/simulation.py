@@ -21,8 +21,8 @@ class Simulation:
         guac_df,
         num_townspeople, 
         st_dev, 
-        pct_upvoting = 0.0, 
-        pct_downvoting = 0.0, 
+        pct_ppl_really_like = 0.0, 
+        pct_ppl_really_dislike = 0.0, 
         assigned_guacs = 20, 
         fullness_factor = False
         ):
@@ -37,10 +37,10 @@ class Simulation:
         self.num_townspeople = num_townspeople
 
         #fraction of townpeople that tend to upvote
-        self.frac_upvoting = pct_upvoting/100.0
+        self.frac_upvoting = pct_ppl_really_like/100.0
 
         #fraction of townpeople that tend to downvote
-        self.frac_downvoting = pct_downvoting/100.0
+        self.frac_downvoting = pct_ppl_really_dislike/100.0
 
         #standard deviation for the toe
         self.st_dev = st_dev
@@ -60,6 +60,9 @@ class Simulation:
         #winners
         self.winner = None
         self.winners = []
+        
+        self.true_winner = self.guac_df.sort_values(by=['objective_score'], ascending=False).iloc[0]['id']
+
 
         #accounting for fullness and decreasing the score accordingly
         self.fullness_factor = fullness_factor
@@ -162,7 +165,7 @@ class Simulation:
             #extract highest sum        
             winning_sum = sorted_scores.iloc[0]['sum']
 
-            #create a dictionary of sums - winners to catch multiple winners
+            #To carch multiple winners, create a dictionary of sums - winners
             sum_winners_dict = utils.create_map_one_to_many(sorted_scores, 'sum', 'id')
             
             sum_winners = sum_winners_dict[winning_sum]

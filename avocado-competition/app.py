@@ -42,19 +42,21 @@ st.subheader("Welcome to Sunnyvale")
 lg.write_story("Introduction")
 
 
-
-st.markdown("---")
 st.subheader("Time to Taste and Vote!")
 section_title = "simulation_1"
 lg.write_story(section_title)
 
-ppl_neutral, ppl_really_like, ppl_really_dislike = lg.types_of_voters(section_title)
+pct_ppl_really_like, pct_ppl_really_dislike = lg.types_of_voters(section_title)
 
+#First simulation, everyone gets everything
+sim1 = Simulation(guac_df, num_townspeople, st_dev, 
+                pct_ppl_really_like=pct_ppl_really_like, 
+                pct_ppl_really_dislike=pct_ppl_really_dislike, 
+                fullness_factor=True)
+sim1.simulate(winner_metric='sum')
 
-sim1 = Simulation(guac_df, num_townspeople, st_dev, fullness_factor=True)
-sim1.simulate(winner_metric='condorcet')
-
-# import pdb;pdb.set_trace()
+st.markdown("---")
+lg.show_winner(sim1)
 
 # lg.animate_results(sim1, key=section_title)
 # if st.session_state[f"{section_title}_keep_chart_visible"]:

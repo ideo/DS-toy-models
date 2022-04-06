@@ -15,7 +15,7 @@ ABOUT_THE_SIMULATION = {
         Specifically, you'll be able to choose between 3 different scenarios (One Clear Winner, A Close Call, A Lot Of Contenders), and between 
         neutral voters and/or voters who really like/dislike guacamole and thus tend to upvote/downvote.""", 
         """Let's start by selecting one of the scenarios below. Throughout the simulation, we'll refer to these scores as the 'true score' (TS).
-        In green is the guacamole with the highest TS."""
+        In green is the guacamole with the highest TS. We'll refer to this as the true winner."""
         
     ], 
     'How Voting Works': [
@@ -45,15 +45,12 @@ STORY = {
         twenty people with big bowls of their family’s pride and joy, gather in the center of the plaza.""",
     ],
 
-    "Simulation Set Up": [
-        "Looking down from Horchata Heaven you are the Guacamole God, and can already clearly spot the winner. Below, well refer to these values as the true scores.",
-    ],
-
     "simulation_1": [
         """To start, we'll ask townpeople (our voters) to vote on each guacamole. These will be shuffled before being assigned to each person. 
         The winning guacamole will be the one with the highest score. """, 
-        """Please select the percentages of townpeople characters you'd like to have between neutral, 
-        people who really like guacamole, and people who really dislike guacamole."""
+        """Please select the percentages of townpeople characters you'd like to have between 
+        people who really like/dislike guacamole.
+        Any remaining percentage will be assigned to neutral voters."""
     ]
 }
 
