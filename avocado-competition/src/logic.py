@@ -496,11 +496,12 @@ def voters_types_and_num_guacs(key, guac_counts=False):
 #         st.button("Next Contestant", on_click=increment_entrant_num)
     
 
-def show_winner(sim):
+def show_winner(sim, section_title):
     col1, col2, col3 = st.columns(3)
 
     #Creating a button to start the simulation
-    start_btn = col1.button("Simulate")
+    #FIXME FROM HERE
+    start_btn = col1.button("Simulate", key='button'+section_title)
     
     #adding some space between the simulate button and the output
     st.write("")
@@ -513,7 +514,7 @@ def show_winner(sim):
         col2.metric(f"The winner is: ", sim.winner)
         col3.metric(f"The true winner is: ", sim.true_winner)
         
-        st.session_state['first_simulate'] = True
+        st.session_state[section_title] = True
 
     return start_btn
 

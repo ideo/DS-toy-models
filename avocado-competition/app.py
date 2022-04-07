@@ -27,7 +27,7 @@ st.title("The Allegory of the Avocados")
 lg.write_about_simulation("Goal")
 
 #write a paragraph
-st.subheader("Simulation Setup")
+st.subheader("1. Simulation Setup")
 lg.write_about_simulation("True Score")
 
 #write instructions for a selection tool
@@ -38,11 +38,11 @@ lg.write_about_simulation("Let The Story Begin")
 
 
 #write a paragraph
-st.subheader("Welcome to Sunnyvale")
+st.subheader("2. Welcome to Sunnyvale")
 lg.write_story("Introduction")
 
 
-st.subheader("Scenario1: Tasting and Voting for All")
+st.subheader("2.1. Scenario1: Tasting and Voting for All")
 section_title = "simulation_1"
 lg.write_story(section_title)
 
@@ -58,19 +58,19 @@ sim1.simulate(winner_metric='sum')
 st.markdown("---")
 
 #add a session state, to have the text continuing 
-#after the first time the simulation is started
-if 'first_simulate' not in st.session_state.keys():
-    st.session_state['first_simulate'] = False
+#after the user has interacted with this part of the simulation
+if section_title not in st.session_state.keys():
+    st.session_state[section_title] = False
 
 
-lg.show_winner(sim1)
+lg.show_winner(sim1, section_title)
 
-if st.session_state['first_simulate']:
+if st.session_state[section_title]:
     #write the conclusion
     lg.write_story('simulation_1_conclusion')
 
     #moving to the simulation where only a subset of guacamoles is assigned to each voter.
-    st.subheader("Scenario2: Tasting and Voting for a Subset")
+    st.subheader("2.2. Scenario2: Tasting and Voting for a Subset")
     section_title = "simulation_2"
     lg.write_story(section_title)
 
@@ -82,8 +82,10 @@ if st.session_state['first_simulate']:
                 num_guacs_per_voter=num_guacs_per_voter, 
                 fullness_factor=True)
     sim2.simulate(winner_metric='condorcet')
+    lg.show_winner(sim2, section_title)
 
 
+st.subheader("3. Conclusions")
 # st.markdown("---")
 # lg.write_story("transition_1_to_2")
 # st.subheader("Not Enough Guac to Go Around")
