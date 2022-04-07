@@ -2,7 +2,7 @@
 ABOUT_THE_SIMULATION = {
     'Goal': [
         """This simulation uses a condorcet method to determine the winner of a guacamole contest. 
-        The goal of this exercise is to show that the winner nominated by having each voter tasting each guacamole can be recovered even when 
+        The goal is to show that the winner nominated by having each voter tasting each guacamole can be recovered even when 
         voters are assigned only a subset of contenders.""", 
         """Limiting how many entries each voter has to taste could create opportunities around:""", 
         "- Every contestant having a fairer shot at winning, expecially the less famous ones.", 
@@ -10,10 +10,12 @@ ABOUT_THE_SIMULATION = {
         "- Extending the competition to more contestants.", 
         "- ...?"
     ], 
-    'True Score': [
+    'Sim Setup': [
         """In this simulation you'll be able to play with how the different guacs compare to one another and the voters' characters.
-        Specifically, you'll be able to choose between 3 different configurations (One Clear Winner, A Close Call, A Lot Of Contenders), and between 
-        neutral voters and/or voters who really like/dislike guacamole and thus tend to upvote/downvote.""", 
+        Specifically, you'll be able to choose between 3 different guacamole configurations, and between 
+        neutral voters and/or voters who really like/dislike guacamole and thus tend to upvote/downvote."""        
+    ], 
+    'Guac Config': [
         """Let's start by selecting one of the configurations below. Throughout the simulation, we'll refer to the scores in the figure as the 'true score' (TS).
         In green is the guacamole with the highest TS. We'll refer to this guacamole as the true winner."""
         
@@ -37,7 +39,6 @@ ABOUT_THE_SIMULATION = {
 STORY = {
     "Introduction":  [
         """Welcome to the town of Sunnyvale, whose citizens are obsessed with all things avocado.
-         They put them on their eggs in the morning, in their tacos midday, and transform them into guacamole for the evening. 
          While everyone agrees that guacamole is the best use of their beloved avocado, no one can agree whose guacamole recipe is the best.""",
         """The town mayor suggests to have a contest to settle once and for all on who can make the best guac. 
         The town will gather, try each one, and vote for the best!""",
@@ -52,14 +53,25 @@ STORY = {
         The remaining percentage will be assigned to neutral voters."""
     ], 
     "simulation_1_conclusion": [
-        """Assuming there's a true winner among the contestants, this can be recovered 
-        even by varying the percentages of townpeople characters to the extremes, 
-        and despite the fullness factor.
+        """Assuming there's a true winner among the contestants, most of the times this can be recovered 
+        even when varying the percentages of townpeople characters to the extremes, and despite the fullness factor.
         This is likely due to a combination of factors, including but not limited to 
-        1) the shuffling of the guacamoles before assigning them to each voter, 
-        2) the chosen value of the standard deviation, 
-        3) the number of townpeople voting, 
-        4) the number of contestants."""
+        1) shuffling the guacamoles before assigning them to each voter, 
+        2) the standard deviation chosen, 
+        3) the number of voters, 
+        4) the number of contestants.""", 
+        """ Below, we take a stab at exploring the parameter space in standard deviations and people characters, 
+        for the configuration where we expect to loose the true winner more easily: A Lot Of Contenders."""
+    ], 
+    "simulation_1_deep_dive": [
+        """Each panel above shows the percentage of time the true winner is recovered (teal)
+        or not (orange) for 100 simulations, for different percentages of people who really dislike guacamole (from 0% to 50%). 
+        We consider standard deviations (std) ranging from 2 to 4 (left to right) 
+        and a percentage of people who really like guacs (pct_ppl_like) from 0% to 50% (top to bottom). 
+        As std increases (left to right), the fraction of time
+        the true winner is recovered decreases (the teal region decreases). 
+        Varying the percentages of the different characters doesn't seem to have that big of an effect.
+        """
     ], 
     "simulation_2": [
         """In this scenario townpeople are asked to vote on a subset of guacamoles. 

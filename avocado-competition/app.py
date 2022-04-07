@@ -6,10 +6,8 @@ import src.logic as lg
 # from src.story import STORY
 from src.simulation import Simulation
 # from src.simulation_unknown_best import Simulation_unknown_best
-from src.tuning import wrap_my_head_around_it
 
 
-# wrap_my_head_around_it()
 
 #set page initial configuration
 st.set_page_config(
@@ -24,25 +22,31 @@ num_townspeople, st_dev, num_guacs = lg.sidebar()
 
 #write the title
 st.title("The Allegory of the Avocados")
+st.subheader("1. The Goal of This Simulation")
 lg.write_about_simulation("Goal")
 
 #write a paragraph
-st.subheader("1. Simulation Setup")
-lg.write_about_simulation("True Score")
+st.subheader("2. Simulation Setup")
+lg.write_about_simulation("Sim Setup")
 
 #write instructions for a selection tool
+lg.write_custom_subsubheader("Guacamoles Configuration")
+lg.write_about_simulation("Guac Config")
 guac_df, scenario = lg.choose_scenario(num_guacs, ['One Clear Winner', 'A Close Call', 'A Lot of Contenders'])
 
+lg.write_custom_subsubheader("Voters Characters")
 lg.write_about_simulation("How Voting Works")
 lg.write_about_simulation("Let The Story Begin")
 
 
 #write a paragraph
-st.subheader("2. Welcome to Sunnyvale")
+st.subheader("3. Welcome to Sunnyvale")
 lg.write_story("Introduction")
 
+#adding new subsection
+lg.write_custom_subheader("3.1. Scenario 1 - Tasting and Voting for All")
+# st.subheader("2.1. Scenario1: Tasting and Voting for All")
 
-st.subheader("2.1. Scenario1: Tasting and Voting for All")
 section_title = "simulation_1"
 lg.write_story(section_title)
 
@@ -68,9 +72,16 @@ lg.show_winner(sim1, section_title)
 if st.session_state[section_title]:
     #write the conclusion
     lg.write_story('simulation_1_conclusion')
+    lg.write_custom_subsubheader("A Lot Of Contenders Deep Dive")
 
+    st.image(f"images/param_space_scan_totalSim100_a-lot-of-contenders_sum_viz.png")
+    lg.write_story('simulation_1_deep_dive')
+    
+    
     #moving to the simulation where only a subset of guacamoles is assigned to each voter.
-    st.subheader("2.2. Scenario2: Tasting and Voting for a Subset")
+    lg.write_custom_subheader("3.2. Scenario 2 - Tasting and Voting for a Subset")
+    # st.subheader("2.2. Scenario2: Tasting and Voting for a Subset")
+
     section_title = "simulation_2"
     lg.write_story(section_title)
 
@@ -85,7 +96,7 @@ if st.session_state[section_title]:
     lg.show_winner(sim2, section_title)
 
 
-st.subheader("3. Conclusions")
+# st.subheader("3. Conclusions")
 # st.markdown("---")
 # lg.write_story("transition_1_to_2")
 # st.subheader("Not Enough Guac to Go Around")

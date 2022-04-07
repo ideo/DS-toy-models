@@ -404,6 +404,13 @@ def voters_types_and_num_guacs(key, guac_counts=False):
 
     return pct_ppl_really_like, pct_ppl_really_dislike, num_guacs_per_voter
 
+def write_custom_subheader(text):
+    custom_title = '<p style="font-size: 24px; font-weight: bold">'+text+'</p>'
+    st.markdown(custom_title, unsafe_allow_html=True)
+    
+def write_custom_subsubheader(text):
+    custom_title = '<p style="font-size: 18px; font-weight: bold">'+text+'</p>'
+    st.markdown(custom_title, unsafe_allow_html=True)
 
 # def num_people_and_guac_per_person_slider():
 #     col1, _, col2 = st.columns([4, 1, 4])
@@ -500,7 +507,6 @@ def show_winner(sim, section_title):
     col1, col2, col3 = st.columns(3)
 
     #Creating a button to start the simulation
-    #FIXME FROM HERE
     start_btn = col1.button("Simulate", key='button'+section_title)
     
     #adding some space between the simulate button and the output
