@@ -17,11 +17,6 @@ sys.path.append(script_path)
 
 from src.condorcetcounting import Condorcetcounting
 
-def get_condorcet_elements(townsperson):
-    guac_df = get_jennas_guac_df()
-    guac_sample_df = get_jennas_sample_guac_df(townsperson)
-    return Condorcetcounting(guac_df, guac_sample_df)
-
 
 def test_create_ballot_dict():
 
@@ -62,10 +57,12 @@ def test_create_ballot_matrix():
     assert np.array_equal(condorcet_elements.ballot_matrix, expected_matrix)
 
 def test_sum_ballot_matrices():
-    """This function tests the sum of matrices using Jenna's ballots.
-    """
+    condorcet_elements = get_condorcet_elements(0)
+    
+    ballots_matrix_list, dummy = get_jenna_condorcet_elements()
 
-    dummy, dummy, ballot_matrices_sum = get_jenna_ballot_matrices_sum()
+    ballot_matrices_sum = condorcet_elements.sum_ballot_matrices(ballots_matrix_list)
+    
     expected_matrix = np.matrix([[0, 0, 0, 2, 0, 0],
                                  [3, 0, 0, 3, 1, 0],
                                  [1, 1, 0, 2, 1, 2],
@@ -77,7 +74,9 @@ def test_sum_ballot_matrices():
 
 
 def test_get_schwartz_relations_matrix():
-    condorcet_elements, dummy, ballot_matrices_sum = get_jenna_ballot_matrices_sum()
+    condorcet_elements = get_condorcet_elements(0)
+    ballots_matrix_list, dummy = get_jenna_condorcet_elements()
+    ballot_matrices_sum = condorcet_elements.sum_ballot_matrices(ballots_matrix_list)
     matrix_of_more_preferred = condorcet_elements.get_schwartz_relations_matrix(ballot_matrices_sum)
 
     expected_matrix = np.matrix([[False, False, False,  True, False, False],
@@ -91,30 +90,24 @@ def test_get_schwartz_relations_matrix():
 
 
 def test_get_smith_or_schwartz_set_statuses():
-    condorcet_elements, dummy, ballot_matrices_sum = get_jenna_ballot_matrices_sum()
+    condorcet_elements = get_condorcet_elements(0)
+    ballots_matrix_list, dummy = get_jenna_condorcet_elements()
+    ballot_matrices_sum = condorcet_elements.sum_ballot_matrices(ballots_matrix_list)
     matrix_of_more_preferred = condorcet_elements.get_schwartz_relations_matrix(ballot_matrices_sum)
     smith_schwartz_set_df = condorcet_elements.get_smith_or_schwartz_set_statuses(matrix_of_more_preferred)
 
     assert smith_schwartz_set_df['in_set'].tolist() == [False, False,  True, False,  True,  True]
 
 def test_get_winner():
-    condorcet_elements, ballot_matrices_list, dummy = get_jenna_ballot_matrices_sum()
-    # condorcet_elements.get_winners(pd.DataFrame(), ballot_matrices_list)
-    #FIXME from here. Add the last test
-    """
-       id  objective_score    color  subjective_score_0  subjective_score_1  subjective_score_2  subjective_score_3  ...  subjective_score_195  subjective_score_196  subjective_score_197  subjective_score_198  subjective_score_199    sum      mean
-0   0                4  #4c78a8                 2.4                 6.6                 NaN                 NaN  ...                   0.0                   0.0                   0.0                   0.5                   NaN  283.2  2.832000
-1   1                5  #4c78a8                 NaN                 0.9                 2.2                 3.2  ...                   NaN                   0.0                   NaN                   2.7                   3.0  379.1  3.791000
-2   2                2  #4c78a8                 3.4                 NaN                 NaN                 1.1  ...                   1.2                   NaN                   0.0                   NaN                   NaN  148.4  1.400000
-3   3                7  #4c78a8                 NaN                 NaN                 NaN                 3.9  ...                   NaN                   2.8                   NaN                   0.3                   NaN  558.5  5.757732
-4   4                6  #4c78a8                 5.0                 7.2                 NaN                 2.5  ...                   0.0                   3.1                   5.2                   1.3                   3.1  436.4  4.545833
-
-
-    """
+    condorcet_elements = get_condorcet_elements(0)
+    ballots_matrix_list, results_df = get_jenna_condorcet_elements()
+    winners, winner = condorcet_elements.get_winners(results_df, ballots_matrix_list)
+    assert winner == 5
+    assert winners == [5]
 
 
 def get_jennas_guac_df():
-    """This function creates a dataframe containing all guacs
+    """This function creates a dataframe containing all of Jenna's guacs
 
     Returns:
         dataframe
@@ -150,17 +143,18 @@ def get_jennas_sample_guac_df(townperson):
     row[6] = [(0,6),(1,8),(3,10),(4,7)]    
     return pd.DataFrame(row[townperson], columns = ["id", 'subjective_score'])
 
-def get_jenna_ballot_matrices_sum():
-    """This function creates the matrix containing the sum of Jenna's ballots
+def get_jenna_condorcet_elements():
+    """This function creates the list of ballot matrices and the results dataframe
+    for Jenna's test data
 
     Returns:
-        condorcet elements
-        matrix containing the sum of Jenna's ballots
         list of ballot matrices        
+        results dataframe
     """
 
     ballots_matrix_list = []
     guac_df = get_jennas_guac_df()
+    results_df = guac_df.copy()
 
     for townsperson in range(7):
         sample_guac_df = get_jennas_sample_guac_df(townsperson)
@@ -170,7 +164,32 @@ def get_jenna_ballot_matrices_sum():
         #collect ballox matrices
         ballots_matrix_list.append(condorcet_elements.ballot_matrix)
 
-    ballot_matrices_sum = condorcet_elements.sum_ballot_matrices(ballots_matrix_list)
-    return condorcet_elements, ballots_matrix_list, ballot_matrices_sum
+        #collect results
+        this_col = f"subjective_score_{townsperson}"
+        
+        #get the id-score map
+        id_score_map = dict(zip(sample_guac_df['id'].tolist(), sample_guac_df['subjective_score'].tolist()))
 
+        #collect scores into dataframe
+        results_df[this_col] = results_df['id'].apply(lambda x: id_score_map.get(x, None))
+
+    results_df['mean'] = results_df.mean(axis=1)
+
+
+    
+    return ballots_matrix_list, results_df
+
+
+def get_condorcet_elements(townsperson):
+    """This function returns a condorcetcounting object
+
+    Args:
+        townsperson (int): a person ID
+
+    Returns:
+        condorcetcounting object
+    """
+    guac_df = get_jennas_guac_df()
+    guac_sample_df = get_jennas_sample_guac_df(townsperson)
+    return Condorcetcounting(guac_df, guac_sample_df)
 
