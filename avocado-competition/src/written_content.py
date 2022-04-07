@@ -53,24 +53,25 @@ STORY = {
         The remaining percentage will be assigned to neutral voters."""
     ], 
     "simulation_1_conclusion": [
-        """Assuming there's a true winner among the contestants, most of the times this can be recovered 
-        even when varying the percentages of townpeople characters to the extremes, and despite the fullness factor.
+        """Assuming there's a true winner, this can be recovered most times
+        even when varying the percentages of townpeople characters to the extremes, and despite the fullness factor 
+        (try changing the numbers and re-running the simulation).
         This is likely due to a combination of factors, including but not limited to 
-        1) shuffling the guacamoles before assigning them to each voter, 
-        2) the standard deviation chosen, 
-        3) the number of voters, 
-        4) the number of contestants.""", 
-        """ Below, we take a stab at exploring the parameter space in standard deviations and people characters, 
+        shuffling the guacamoles before assigning them to each voter, 
+        the standard deviation chosen, 
+        the number of voters, 
+        the number of contestants.""", 
+        """ Below, we explore the parameter space in standard deviations (std) and people characters, 
         for the configuration where we expect to loose the true winner more easily: A Lot Of Contenders."""
     ], 
     "simulation_1_deep_dive": [
         """Each panel above shows the percentage of time the true winner is recovered (teal)
         or not (orange) for 100 simulations, for different percentages of people who really dislike guacamole (from 0% to 50%). 
-        We consider standard deviations (std) ranging from 2 to 4 (left to right) 
+        We consider std ranging from 2 to 4 (left to right) 
         and a percentage of people who really like guacs (pct_ppl_like) from 0% to 50% (top to bottom). 
         As std increases (left to right), the fraction of time
         the true winner is recovered decreases (the teal region decreases). 
-        Varying the percentages of the different characters doesn't seem to have that big of an effect.
+        Varying the percentages of the different voters' characters doesn't seem to have that big of an effect.
         """
     ], 
     "simulation_2": [
