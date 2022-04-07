@@ -13,7 +13,6 @@ from .condorcetcounting import Condorcetcounting
 from random import sample
 
 #TODO Fix parameter space scan to test for not all guacs being assigmed
-#TODO check adding upvoting and downoting
 
 class Simulation:
     def __init__(

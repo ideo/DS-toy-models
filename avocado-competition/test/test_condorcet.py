@@ -4,12 +4,6 @@ import numpy as np
 import sys
 import os
 
-    #create matrix sum and check
-    #create preference matrix and check
-    #create next matrix and check
-    #create swarz set and check
-    #find winners and check
-
 #adding to the known directory the one where the script sits
 this_file_path = os.path.dirname(__file__)
 script_path = os.path.join(this_file_path, '..')
