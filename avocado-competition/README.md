@@ -10,7 +10,11 @@ Limiting how many entries each judge has to taste could create opportunities aro
 - Extending the competition to more contestants.
 - ...?
 
-This simulation uses streamlit. Given some limitations of streamlit this script uses python 3.7.
+# Things you get exposed to with this toy model
+- Streamlit
+- Adding tests via pytest
+- Using python classes 
+- Docstrings
 
 # How to run it
 
@@ -24,6 +28,6 @@ Run the script via
 `pipenv run streamlit run app.py`
 
 
-### Streamlit & Pandas Version Conflicts
+### WARNING - Streamlit & Pandas Version Conflicts
 
 Streamlit will let you develop locally with the latest python (3.9.x) but can only host up to python 3.7.12. The latest pandas has moved on from python 3.7. All this is to say, please don't change the python and pandas versions specified in the pipenv files.
