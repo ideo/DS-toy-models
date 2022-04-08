@@ -1,23 +1,20 @@
-# About this toy model
-
-This simulation uses a condorcet method to determine the winner of a guacamole contest. 
-The goal of this exercise is to show that the winner nominated by having each judge tasting each guacamole can be recovered even when 
-judges are assigned only a subset of contenders. 
-
-Limiting how many entries each judge has to taste could create opportunities around: 
-- Every contestant having a fairer shot at winning, expecially the less famous ones. 
-- Mitigating natural behaviors (e.g., the fuller you get and the less excited you are to eat more guac).
-- Extending the competition to more contestants.
-- ...?
-
 # Things you get exposed to with this toy model
 - Streamlit
 - Adding tests via pytest
 - Using python classes 
 - Docstrings
 
-# How to run it
+# About this toy model
+This simulation uses a condorcet method to determine the winner of a guacamole contest. 
+The goal is to show that the winner nominated by having each voter tasting each guacamole can be recovered even when 
+voters are assigned only a subset of contenders.
 
+Limiting how many entries each voter has to taste could create opportunities around, e.g.:
+- Every contestant having a fairer shot at winning, expecially the less famous ones
+- Mitigating natural behaviors, such as, the fuller you get and the less excited you are to eat more (and the worse your vote is going to get)
+- Extending the competition to more contestants.
+
+# How to run it
 Install the required packages from pipenv via 
 `pipenv install`
 
