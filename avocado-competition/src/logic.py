@@ -1,7 +1,7 @@
 import streamlit as st
 from .guacamoles import Guacamoles
 
-from .written_content import STORY, ABOUT_THE_SIMULATION#INSTRUCTIONS, SUCCESS_MESSAGES
+from .written_content import STORY, ABOUT_THE_SIMULATION
 
 COLORS = {
     "blue":     "#4c78a8",
@@ -10,7 +10,8 @@ COLORS = {
 }
 
 def write_about_simulation(section_title):
-    """This function adds a piece of story to the page
+    """This function adds a piece of ABOUT_THE_SIMULATION 
+    from written_content to the page
 
     Args:
         section_title (string): title of the section
@@ -19,7 +20,8 @@ def write_about_simulation(section_title):
         st.write(paragraph)
 
 def write_story(section_title):
-    """This function adds a piece of story to the page
+    """This function adds a piece of STORY 
+    from written_content to the page
 
     Args:
         section_title (string): title of the section
@@ -28,9 +30,8 @@ def write_story(section_title):
         st.write(paragraph)
 
 def sidebar():
+    """This function contains all sidebar controls
     """
-    Let's put all the sidebar controls here!
-    """    
     st.sidebar.subheader("Simulation Parameters")
     
     keep_out = """
@@ -59,11 +60,17 @@ def sidebar():
 
 
 def choose_scenario(num_guacs, scenarios):
-    """
-    The user selects a scenario, which determines the 'objective ratings' to be
-    used in the simulation.
-    """
+    """ This function allows the user selects a scenario, 
+    which determines the 'objective score' to be used in the simulation.
 
+    Args:
+        num_guacs (int): number of guacamoles for the simulation
+        scenarios (string): configuration for the simulation
+
+    Returns:
+        dataframe with objective scores
+        chosen scenario
+    """
     #define the structure of the entry as 2 columns
     col1, col2 = st.columns([2,5])
 
@@ -107,6 +114,9 @@ def choose_scenario(num_guacs, scenarios):
 
 
 def voters_types_and_num_guacs(key, guac_counts=False):
+    """ This function allows the user to select voters preferences and 
+    number of guacs to assign each voter.
+    """
     col1, col2 = st.columns(2)
     num_guacs_per_voter = 0
 
@@ -147,14 +157,34 @@ def voters_types_and_num_guacs(key, guac_counts=False):
     return pct_ppl_really_like, pct_ppl_really_dislike, num_guacs_per_voter
 
 def write_custom_subheader(text):
+    """This function writes a custom sub-header
+
+    Args:
+        text (string): text to write
+    """
     custom_title = '<p style="font-size: 24px; font-weight: bold">'+text+'</p>'
     st.markdown(custom_title, unsafe_allow_html=True)
     
 def write_custom_subsubheader(text):
+    """This function writes a custom sub-sub-header
+
+    Args:
+        text (string): text to write
+    """
     custom_title = '<p style="font-size: 18px; font-weight: bold">'+text+'</p>'
     st.markdown(custom_title, unsafe_allow_html=True)    
 
 def show_winner(sim, section_title):
+    """This function shows the winning guacamole, together
+    with the true winner
+
+    Args:
+        sim (simulation object)
+        section_title (string): title of the section
+
+    Returns:
+        streamlit button
+    """
     col1, col2, col3 = st.columns(3)
 
     #Creating a button to start the simulation

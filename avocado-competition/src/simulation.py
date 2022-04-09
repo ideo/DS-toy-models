@@ -67,7 +67,7 @@ class Simulation:
         self.fullness_factor = fullness_factor
 
     def get_personas_counts(self):
-        """This function creates the counts for the different personas.
+        """This function computes the counts for the different personas.
 
         Returns:
            tuple of integers with the count for each persona
@@ -122,7 +122,7 @@ class Simulation:
         """This function computes the subjective score.
 
         Args:
-            objective_score (float): guac god given score
+            objective_score (float): objective scores configuration selected by the user
             persona (dictionary): persona's mean offset and standard deviation
             incremental_number (int): guac incremental number for the fullness factor
 
@@ -155,7 +155,8 @@ class Simulation:
             metric (string): metric to use
 
         Returns:
-           a list of winner and the randomly chosen one
+           a list of winners (if there are multiple) and the winner (if there are multiple
+           we choose one at random)
         """
         if metric == 'sum':
 

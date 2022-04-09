@@ -1,9 +1,3 @@
-# import numpy as np
-# import pandas as pd
-# from .condorcetcounting import Condorcetcounting
-
-
-# Base Class
 class Townsperson:
     def __init__(
         self, 
@@ -17,6 +11,7 @@ class Townsperson:
         self.std = std
     
     def get_mean_offset(self):
+        """This function returns the mean offset based on the person"""
         if self.type == 'upvoting':
             return 2
         elif self.type == 'downvoting':
