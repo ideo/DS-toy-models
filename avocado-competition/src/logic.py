@@ -69,7 +69,7 @@ def choose_scenario(num_guacs, scenarios):
 
     #create selection list on left
     scenario = col1.radio(
-        "Chose a configuration", 
+        "Choose an example configuration", 
         options=scenarios,
         )
 
@@ -116,7 +116,7 @@ def voters_types_and_num_guacs(key, guac_counts=False):
 
     pct_ppl_really_like = col1.slider(
         """
-        Select the % of people who really like guacamole
+        Select the % of voters who like guacamole
         """,
         value=30,
         min_value=0,
@@ -126,7 +126,7 @@ def voters_types_and_num_guacs(key, guac_counts=False):
 
     pct_ppl_really_dislike = col2.slider(
         """
-        Select the % of people who really dislike guacamole
+        Select the % of voters who dislike guacamole
         """,
         value=30,
         min_value=0,

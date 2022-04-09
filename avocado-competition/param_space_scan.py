@@ -85,10 +85,11 @@ def param_space_scan():
     # total_number_simulations = 100
 
     #guacs subset
-    scenarios = ['A Lot of Contenders', 'One Clear Winner', 'A Close Call']
+    scenarios = ['A Lot of Contenders']
+    metrics = ['condorcet']
     num_guacs = 20
     num_guacs_per_voter_list = list(range(20,1,-1))
-    num_townspeople = 200
+    num_townspeople = 300
     stds = [2,4,6]
     pct_like = [33]
     pct_dislike = [33]
@@ -103,7 +104,7 @@ def param_space_scan():
         scenario = '-'.join(scenario.lower().split(' '))
 
         rows = []
-        for metric in ['sum']:
+        for metric in metrics:
             for std in stds:
                 for plike in pct_like:
                     for pdislike in pct_dislike:
@@ -158,18 +159,18 @@ def param_space_scan():
                                     #if not all guacs have been assigned, then the configuration is not fair
                                     if len(sim.results_df[sim.results_df['mean'].isnull()]) > 0:
                                         # print('Not all quacs assigned!')
-                                        row[f"nggp_{ngpv}"] = 'not_all_assigned'
-                                        row[f"nggp_{ngpv}"] = 'not_all_assigned'
+                                        row[f"guac_{ngpv}"] = 'not_all_assigned'
+                                        row[f"guac_{ngpv}"] = 'not_all_assigned'
                                     else:
                                         if sim.winner == sim.true_winner:
-                                            row[f"nggp_{ngpv}"] = 'true'
+                                            row[f"guac_{ngpv}"] = 'true'
                                         else:
-                                            row[f"nggp_{ngpv}"] = 'false'
+                                            row[f"guac_{ngpv}"] = 'false'
 
                                         if len(sim.winners) > 1:
                                             fraction_multiple_winners += 1
 
-                                    print(f"{tns} - cmetric = {metric}, scenario = {row['scenario']}, std = {std}, pct_ppl_like = {plike}, pct_ppl_dislike = {pdislike}, ngpv = {ngpv}, result = ", row[f"nggp_{ngpv}"])
+                                    print(f"{tns} - metric = {metric}, scenario = {row['scenario']}, std = {std}, pct_ppl_like = {plike}, pct_ppl_dislike = {pdislike}, ngpv = {ngpv}, result = ", row[f"guac_{ngpv}"])
 
 
                             if len(num_guacs_per_voter_list) > 1:
@@ -181,7 +182,7 @@ def param_space_scan():
         if len(num_guacs_per_voter_list) == 1 and num_guacs_per_voter_list[0] == 20:
             my_filename = f"data/param_space_scan_totalSim{total_number_simulations}_{scenario}_{metric}.csv"
         else:
-            my_filename = f"data/param_space_scan_guacs_subset_totalSim{total_number_simulations}_{scenario}_{metric}.csv"
+            my_filename = f"data/param_space_scan_guacs_subset_totalSim{total_number_simulations}_townpeople{num_townspeople}_{scenario}_{metric}.csv"
             
         df = pd.DataFrame(rows)
         df.to_csv(my_filename)
