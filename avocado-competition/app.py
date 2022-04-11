@@ -59,7 +59,7 @@ lg.show_winner(sim1, section_title)
 
 if st.session_state[section_title]:
     lg.write_story('simulation_1_conclusion')
-    lg.write_custom_subsubheader("A Lot Of Contenders Deep Dive")
+    lg.write_custom_subsubheader("'A Lot Of Contenders' Deep Dive")
 
     st.image(f"images/param_space_scan_totalSim100_a-lot-of-contenders_sum_viz.png")
     lg.write_story('simulation_1_deep_dive')
@@ -88,7 +88,7 @@ if st.session_state[section_title]:
 
         lg.write_story('simulation_2_conclusion')
 
-        lg.write_custom_subsubheader("A Lot Of Contenders Deep Dive")
+        lg.write_custom_subsubheader("'A Lot Of Contenders' Deep Dive")
 
         st.image(f"images/param_space_scan_guacs_subset_totalSim200_townpeople100-200-300_a-lot-of-contenders_condorcet_20200408_viz.png")
         lg.write_story('simulation_2_deep_dive')
