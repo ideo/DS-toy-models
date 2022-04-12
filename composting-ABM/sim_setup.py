@@ -1,6 +1,6 @@
 import numpy as np
 import altair as alt
-import altair_viewer as altv
+# import altair_viewer as altv
 # import pandas as pd
 # import random
 
