@@ -51,56 +51,52 @@ with col1:
         st.write(f"Random seed = {optional_seed}")
 
     # TODO: be able to select number of days
-    st.subheader('Neighborhood size')
     
-    if 'n_composters' not in st.session_state.keys():
-        initial_value_composters = 5
-        num_composters = initial_value_composters
-
-    #FIXME HERE
+    # pick the neghborhood size
+    st.subheader('Neighborhood size')
     neighborhood_size = st.slider('How many people live in the neighborhood?', 
                                     min_value = 10, 
                                     max_value = 200, 
                                     step = 10,
                                     value = 70,
-                                    key = 'nbhd', 
-                                    on_change = utils.retain_num_composters(num_composters))  # saves the state of num_composters on each change
+                                    key = 'nbhd')
 
-    st.subheader('Number of initial composters')
-
-    # The max number of initial composters is either 25 or lower (for neighbours with less than 50 ppl)
-    num_composters = st.slider('How many people are randomly chosen to be composters at the beginning of the simulation?',
+    # pick the fraction of initial composters as a percentage of the neighborhood size
+    st.subheader('Fraction of initial composters')
+    frac_composters = st.slider('What is the % of composters at the beginning of the simulation?',
                                 min_value = 1, 
-                                max_value = int(min(50, neighborhood_size)/2), 
-                                value = initial_value_composters,
+                                max_value = 50, 
+                                value = 10,
+                                format="%g%%",
                                 key = 'n_composters')
+                                
+    num_composters = int(frac_composters*neighborhood_size/100)
+    st.write(f"({num_composters} composters)")
 
-    st.subheader('Spread of distribution of personality scores')
-    personality_spread = st.slider('Personality scores are on a Beta(a, b) distribution. When Beta parameters A and'
-                                            ' B are equal, the shape of the distribution resembles a bell curve across the '
-                                            'interval 0 to 1, centered at 0.5. This spread parameter is inversely based on '
-                                            'increasing both Beta parameters. Then, since personality scores are on a scale '
-                                            'of 1 through 10, we multiply the randomly generated value by 10.',
-                                    min_value = 1, max_value = 10, value = 5)
-    personality_spread_distr = pd.DataFrame([[x*10, beta.pdf(x, a = 11 - personality_spread, b = 11 - personality_spread)]
-                                                for x in np.arange(0, 1, 0.001)])  # TODO: fix y axis bounds
-    personality_spread_distr.columns = ['Personality Score', 'y']
-    personality_spread_plot = alt.Chart(personality_spread_distr).mark_area().encode(x = 'Personality Score',
-                                                                                        y = alt.Y('y', axis = alt.Axis(title = 'Probability Density', labels = False)))
-    st.altair_chart(personality_spread_plot)
+    st.subheader('Spread of Personalities')
+    st.write(""" We create fictitious personality scores from 1 to 10 by sampling them from 
+                a symmetric beta distribution and multiplying the result by 10.
+                We choose a beta distribution because of its convenient shape, 
+                (between 0 and 1 and centered at 0.5) and because playing with
+                the spread allows us to consider a variety of personalities distributions, from narrow to flat.""")
+    personality_spread = st.slider("""Choose the spread of this distribution, from narrow (1) to flat (10)""",
+                                    min_value = 1, 
+                                    max_value = 10, 
+                                    value = 5)
+    utils.visualize_personality_spread_distr(personality_spread)                                    
 
-    st.subheader('Standard deviation of Normal distribution of sociability margins')
-    sociability_spread = st.slider('Each person in the neighborhood has a "margin" about their personality that defines'
-                                    ' who they are willing to talk to. Two people will only converse if their personality'
-                                    ' margins overlap',
+    st.subheader('Sociability Margins')
+    st.write("""We further enrich each personality by adding a 'margin'. 
+            This defines who people are willing to talk to, namely, two people will 
+            only converse if their personality margins (personality score +/- margin) overlap.
+            Margins are sampled from an asymmetric normal distribution centered at 0 and with a standard
+            deviation of your choice.""")
+    sociability_spread = st.slider('Choose the spread of this distribution.',
                                     value = float(1),
-                                    min_value = float(0.5), max_value = float(1.5), step = 0.1)
-    sociability_spread_distr = pd.DataFrame([[x, norm.pdf(x, 0, sociability_spread)] for x in np.arange(0, 4, 0.001)])
-    # recall that this is a half distribution because we take the absolute value of the score--it's a margin
-    sociability_spread_distr.columns = ['Sociability Margin', 'y']
-    sociability_spread_plot = alt.Chart(sociability_spread_distr).mark_area().encode(x = 'Sociability Margin',
-                                                                                        y = alt.Y('y', axis = alt.Axis(title = 'Probability Density', labels = False)))
-    st.altair_chart(sociability_spread_plot)
+                                    min_value = float(0.5), 
+                                    max_value = float(1.5), 
+                                    step = 0.1)
+    utils.visualize_sociability_spread_distr(sociability_spread)
 
     st.subheader('Encouragement skew')
     # depending on the value 1 through 10, beta a = the value and b = 10-the value
