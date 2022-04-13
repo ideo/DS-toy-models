@@ -41,6 +41,7 @@ col1, col2 = st.columns(2)
 with col1:
 
     #request the user an optional random seed    
+    st.subheader('Random Seed')
     seed_input = st.text_input("""Input an optional integer random seed or leave it blank.""",
                                key = 'seed_input')
 
@@ -74,53 +75,58 @@ with col1:
     st.write(f"({num_composters} composters)")
 
     st.subheader('Spread of Personalities')
-    st.write(""" We create fictitious personality scores from 1 to 10 by sampling them from 
+    st.write(""" We create personality scores from 1 to 10 by sampling them from 
                 a symmetric beta distribution and multiplying the result by 10.
-                We choose a beta distribution because of its convenient shape, 
-                (between 0 and 1 and centered at 0.5) and because playing with
-                the spread allows us to consider a variety of personalities distributions, from narrow to flat.""")
+                We choose this distribution because of its convenient shape
+                (bounded between 0 and 1, centered at 0.5) and because it tapers off smoothly at 
+                the boundaries.""")
+    xmax = 10
     personality_spread = st.slider("""Choose the spread of this distribution, from narrow (1) to flat (10)""",
                                     min_value = 1, 
-                                    max_value = 10, 
+                                    max_value = xmax, 
                                     value = 5)
-    utils.visualize_personality_spread_distr(personality_spread)                                    
+    utils.visualize_personality_spread_distr(personality_spread, xmax)                                    
 
     st.subheader('Sociability Margins')
-    st.write("""We further enrich each personality by adding a 'margin'. 
-            This defines who people are willing to talk to, namely, two people will 
+    st.write("""We enrich each personality by adding a 'margin'. 
+            This defines who people are willing to talk to. Two people will 
             only converse if their personality margins (personality score +/- margin) overlap.
-            Margins are sampled from an asymmetric normal distribution centered at 0 and with a standard
-            deviation of your choice.""")
-    sociability_spread = st.slider('Choose the spread of this distribution.',
+            Margins are sampled from an asymmetric normal distribution centered at 0.""")
+    sociability_spread = st.slider('Choose the standard deviation of this distribution.',
                                     value = float(1),
                                     min_value = float(0.5), 
                                     max_value = float(1.5), 
                                     step = 0.1)
     utils.visualize_sociability_spread_distr(sociability_spread)
 
+    
     st.subheader('Encouragement skew')
+    st.write("""If someone already composts, how likely are they to encourage
+                other people to do the same? We model this probability via a beta distribution and you
+                can choose its skeweness.""")
+
     # depending on the value 1 through 10, beta a = the value and b = 10-the value
-    encouragement_skew = st.slider('If someone composts already, how likely are they to encourage others to compost?'
-                                    ' A higher value means more likely.', value = 5,
-                                    min_value = 1, max_value = 10)
-    encouragement_skew_distr = pd.DataFrame([[x, x * 10, beta.pdf(x, a = encouragement_skew, b = 11 - encouragement_skew)]
-                                                for x in np.arange(0, 1, 0.001)])
-    encouragement_skew_distr.columns = ['Probability of Encouragement', 'x', 'y']
-    encouragement_skew_plot = alt.Chart(encouragement_skew_distr).mark_area().encode(x = 'Probability of Encouragement',
-                                                                                        y = alt.Y('y', axis = alt.Axis(title = 'Probability Density', labels = False)))
-    st.altair_chart(encouragement_skew_plot)
+    xmax = 10
+    encouragement_skew = st.slider("""Choose its skeweness. Higher values mean more 
+                                    likely to encourage others.""", 
+                                    value = 5,
+                                    min_value = 1, 
+                                    max_value = xmax)
+    utils.visualize_encourage_or_stubborn_skew_distr(encouragement_skew, xmax, 'encouragement')
+
 
     st.subheader('Stubbornness skew')
-    # similar idea as last slider with beta distribution
-    stubbornness_skew = st.slider("If someone doesn't compost, how likely are they to be convinced by a neighbor to start?"
-                                    " A higher value means more likely.", value = 3,
-                                    min_value = 1, max_value = 10)
-    stubbornness_skew_distr = pd.DataFrame([[x, x * 10, beta.pdf(x, a = stubbornness_skew, b = 11 - stubbornness_skew)]
-                                                for x in np.arange(0, 1, 0.001)])
-    stubbornness_skew_distr.columns = ['Probability of Being Convinced', 'x', 'y']
-    stubbornness_skew_plot = alt.Chart(stubbornness_skew_distr).mark_area().encode(x = 'Probability of Being Convinced',
-                                                                                    y = alt.Y('y', axis = alt.Axis(title = 'Probability Density', labels = False)))
-    st.altair_chart(stubbornness_skew_plot)
+    st.write("""If someone doesn't compost, how likely are they to be convinced by a 
+            neighbor to start? We model this probability via a beta distribution and you
+            can choose its skeweness.""")
+    
+    xmax = 10
+    stubbornness_skew = st.slider("""Choose its skeweness. Higher values mean more 
+                                    likely to be convinced.""", 
+                                    value = 3,
+                                    min_value = 1, 
+                                    max_value = 10)
+    utils.visualize_encourage_or_stubborn_skew_distr(stubbornness_skew, xmax, 'stubborness')
 
     model = setup.Interact(n_neighbors = neighborhood_size, n_already_composting = num_composters,
                             personality_spread = personality_spread,
