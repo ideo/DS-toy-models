@@ -85,7 +85,8 @@ with col1:
                                     min_value = 1, 
                                     max_value = xmax, 
                                     value = 5)
-    utils.visualize_personality_spread_distr(personality_spread, xmax)                                    
+    
+    utils.visualize_parameter_distr(personality_spread, xmax, 'personality_score', 'simmetric_beta')
 
     st.subheader('Sociability Margins')
     st.write("""We enrich each personality by adding a 'margin'. 
@@ -97,7 +98,8 @@ with col1:
                                     min_value = float(0.5), 
                                     max_value = float(1.5), 
                                     step = 0.1)
-    utils.visualize_sociability_spread_distr(sociability_spread)
+
+    utils.visualize_parameter_distr(sociability_spread, 4, 'sociability_margin', 'normal')
 
     
     st.subheader('Encouragement skew')
@@ -112,8 +114,7 @@ with col1:
                                     value = 5,
                                     min_value = 1, 
                                     max_value = xmax)
-    utils.visualize_encourage_or_stubborn_skew_distr(encouragement_skew, xmax, 'encouragement')
-
+    utils.visualize_parameter_distr(encouragement_skew, xmax, 'probability_of_encouragement', 'beta')
 
     st.subheader('Stubbornness skew')
     st.write("""If someone doesn't compost, how likely are they to be convinced by a 
@@ -126,7 +127,7 @@ with col1:
                                     value = 3,
                                     min_value = 1, 
                                     max_value = 10)
-    utils.visualize_encourage_or_stubborn_skew_distr(stubbornness_skew, xmax, 'stubborness')
+    utils.visualize_parameter_distr(stubbornness_skew, xmax, 'probability_of_being_convinced', 'beta')
 
     model = setup.Interact(n_neighbors = neighborhood_size, n_already_composting = num_composters,
                             personality_spread = personality_spread,

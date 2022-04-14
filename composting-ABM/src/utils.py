@@ -21,67 +21,74 @@ def check_random_seed_content(random_seed):
     except:        
         return ''
 
-def visualize_personality_spread_distr(personality_spread, xmax):
-    """This function creates a visual of the manipulated beta distribution pdf.
-    The parameters a and b of the beta distribution are related to the personality spread so that, 
-    for personalities on a scale from 1 to 10
-    - if personality_spread is 1, then a = b = 10
-    - if personality_spread is 10, then a = b = 1
+def sample_from_beta_distr_pdf(x, xmax, param, simmetric):
+    """This function samples from the pdf of a custom beta distribution
+
+    Note:
+    - If a<1 and b<1 -> the pdf has a U shape. 
+    - If a+b is large enough and a~b -> the pdf has a bell shape.
+    --> in some cases we can pick a and b to create the shape we need.
+
+    For a simmetric beta, param == spread:
+      - if spread is 1, then a = b = xmax
+      - if spread is xmax, then a = b = 1
+    
+    For asimmetric beta, param == probability of success
+
+    Args:
+        x (int): value to sample 
+        xmax (int): max value for x-axis
+        spread (int): width
+        simmetric (bool): whether the beta distribution is simmetric or not
+
+    Returns:
+        float: the pdf(x)
+    """
+    if simmetric:
+        pdf = beta.pdf(x, a = (xmax + 1) - param, b = (xmax + 1) - param)
+    else:
+        pdf = beta.pdf(x, a = param, b = (xmax+1) - param)
+    return pdf
+
+def sample_from_normal_distr_pdf(x, mean, std):
+    """This function samples from a normal distribution
+
+    Args:
+        x (float): value to sample pdf of
+        mean (float): mean of the distribution
+        std (float): standard deviation of the distribution
+
+    Returns:
+        float: the pdf(x)
+    """
+    return norm.pdf(x, mean, std)
+
+def visualize_parameter_distr(param, xmax, param_name, distribution):
+    """This function creates a visual of the spread 
+    of a given parameter assuming it follows a given distribution.
 
     Args:
         personality_spread (int): distribution spread
         xmax (int): max value of the slider
+        param_name (str): name of the parameter for viz purposed
+        distribution (str): distribution to sample from
     """
+
+    if 'beta' in distribution:
+        simmetric = True if 'simmetric' in distribution else False        
+        distr_df = pd.DataFrame([(x*xmax, 
+                                  sample_from_beta_distr_pdf(x, xmax, param, simmetric)) 
+                                for x in np.arange(0, 1, 0.001)])
     
-    distr_df = pd.DataFrame([(x*xmax, beta.pdf(x, a = (xmax + 1) - personality_spread, b = (xmax + 1) - personality_spread)) 
-                            for x in np.arange(0, 1, 0.001)], 
-                            columns = ['personality_score', 'probability_density'])
-    # normalization = distr_df['probability_density'].sum()
-    # distr_df['probability_density'] = distr_df['probability_density']/normalization
+    elif distribution == 'normal':
+        distr_df = pd.DataFrame([(x*xmax, 
+                                  sample_from_normal_distr_pdf(x, 0, param)) 
+                                for x in np.arange(0, xmax, 0.001)])
 
-    distr_plot = alt.Chart(distr_df).mark_area().encode(x = 'personality_score', 
+    distr_df.columns = [param_name, 'probability_density']
+    distr_plot = alt.Chart(distr_df).mark_area().encode(x = param_name, 
                                                         y = alt.Y('probability_density', axis = alt.Axis(labels = False)))
 
     st.altair_chart(distr_plot)
 
-
-def visualize_sociability_spread_distr(sociability_spread):
-    """This function creates a visual of an asymmetric normal
-    distribution centered at 0.
-
-    Args:
-        sociability_spread (float): standard deviation of the distribution
-
-    """
-    xmax = 4
-    distr_df = pd.DataFrame([(x, norm.pdf(x, 0, sociability_spread)) 
-                            for x in np.arange(0, xmax, 0.001)], 
-                            columns = ['sociability_margin', 'probability_density'])
-
-    distr_plot = alt.Chart(distr_df).mark_area().encode(x = 'sociability_margin',
-                                                        y = alt.Y('probability_density', axis = alt.Axis(labels = False)))
-    st.altair_chart(distr_plot)
     
-def visualize_encourage_or_stubborn_skew_distr(skew_amount, xmax, which_one):
-    """This function creates a visual of the beta distribution.
-    If a<1 and b<1, the probability density function has a U shape. 
-    Instead, the PDF of a beta distribution is ~ normal if a+b is 
-    large enough and a~b.
-    To obtain a bell curve we increase a and b artificially by changing the scale.
-
-    Args:
-        skew_amount (int): level of skewness of the distribution
-        xmax (int): max value of the slider
-        
-    """
-    if which_one == 'encouragement':
-        col_name = 'probability_of_encouragement'
-    elif which_one == 'stubborness': 
-        col_name = 'probability_of_being_convinced'
-        
-    distr_df = pd.DataFrame([[x, beta.pdf(x, a = skew_amount, b = (xmax+1) - skew_amount)]
-                            for x in np.arange(0, 1, 0.001)], 
-                            columns = [col_name, 'probability_density'])
-    distr_plot = alt.Chart(distr_df).mark_area().encode(x = col_name,
-                                                        y = alt.Y('probability_density', axis = alt.Axis(labels = False)))
-    st.altair_chart(distr_plot)
