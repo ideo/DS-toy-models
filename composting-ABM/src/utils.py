@@ -21,7 +21,7 @@ def check_random_seed_content(random_seed):
     except:        
         return ''
 
-def sample_from_beta_distr_pdf(x, xmax, param, simmetric):
+def sample_from_beta_distr(x, xmax, param, simmetric, output = 'value'):
     """This function samples from the pdf of a custom beta distribution
 
     Note:
@@ -45,12 +45,22 @@ def sample_from_beta_distr_pdf(x, xmax, param, simmetric):
         float: the pdf(x)
     """
     if simmetric:
-        pdf = beta.pdf(x, a = (xmax + 1) - param, b = (xmax + 1) - param)
-    else:
-        pdf = beta.pdf(x, a = param, b = (xmax+1) - param)
-    return pdf
+        my_a = (xmax + 1) - param
+        my_b = my_a
+        
+        pdf = beta.pdf(x, a = my_a, b = my_b)
+        value = np.random.beta(my_a, my_b)*xmax
 
-def sample_from_normal_distr_pdf(x, mean, std):
+    else:
+        my_a = param
+        my_b = (xmax+1) - param
+        pdf = beta.pdf(x, a = my_a, b = my_b)
+        value = np.random.beta(my_a, my_b)
+
+    
+    return value if output == 'value' else pdf
+
+def sample_from_normal_distr(x, std, mean = 0, output = 'value'):
     """This function samples from a normal distribution
 
     Args:
@@ -61,7 +71,10 @@ def sample_from_normal_distr_pdf(x, mean, std):
     Returns:
         float: the pdf(x)
     """
-    return norm.pdf(x, mean, std)
+    pdf = norm.pdf(x, mean, std)
+    value = np.random.normal(mean, std)
+    return value if output == 'value' else pdf
+    
 
 def visualize_parameter_distr(param, xmax, param_name, distribution):
     """This function creates a visual of the spread 
@@ -77,18 +90,38 @@ def visualize_parameter_distr(param, xmax, param_name, distribution):
     if 'beta' in distribution:
         simmetric = True if 'simmetric' in distribution else False        
         distr_df = pd.DataFrame([(x*xmax, 
-                                  sample_from_beta_distr_pdf(x, xmax, param, simmetric)) 
+                                  sample_from_beta_distr(x, xmax, param, simmetric, output = 'pdf')) 
                                 for x in np.arange(0, 1, 0.001)])
     
     elif distribution == 'normal':
         distr_df = pd.DataFrame([(x*xmax, 
-                                  sample_from_normal_distr_pdf(x, 0, param)) 
+                                  sample_from_normal_distr(x, param, output = 'pdf')) 
                                 for x in np.arange(0, xmax, 0.001)])
 
     distr_df.columns = [param_name, 'probability_density']
-    distr_plot = alt.Chart(distr_df).mark_area().encode(x = param_name, 
-                                                        y = alt.Y('probability_density', axis = alt.Axis(labels = False)))
+    distr_plot = alt.Chart(distr_df).mark_area().properties(
+        width = 250,
+        height = 150,
+        ).encode(
+            x = param_name, 
+            y = alt.Y('probability_density', axis = alt.Axis(labels = False))
+        )
 
     st.altair_chart(distr_plot)
 
     
+def write_custom_subsubheader(text):
+    """This function writes a custom sub-sub-header
+    Args:
+        text (string): text to write
+    """
+    custom_title = '<p style="font-size: 18px; font-weight: bold">'+text+'</p>'
+    st.markdown(custom_title, unsafe_allow_html=True)    
+
+def write_custom_subheader(text):
+    """This function writes a custom sub-sub-header
+    Args:
+        text (string): text to write
+    """
+    custom_title = '<p style="font-size: 24; font-weight: bold">'+text+'</p>'
+    st.markdown(custom_title, unsafe_allow_html=True)    

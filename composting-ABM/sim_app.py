@@ -1,11 +1,13 @@
 import streamlit as st
 import altair as alt
-import sim_setup as setup
-import numpy as np
-import pandas as pd
-from scipy.stats import norm, beta
-import src.utils as utils
+# TODO: one potential theme to explore: do we achieve faster collective adaptation of a behavior if a bunch of
+#  individuals already behave a certain way but don't talk to each other, as opposed to only a few people behaving a
+#  certain way but them having more networked influence?
+# TODO: add README
 
+import pandas as pd
+import src.utils as utils
+from src.interact import Interact
 st.set_page_config(layout = 'wide')
 
 
@@ -29,32 +31,39 @@ st.write("""People like to pat themselves on the back when they start
         chat if their personalities are compatible. What conditions are necessary for 
         composting to really take off in the neighborhood?""")
 
-model_plot = None
+st.subheader('About some assumptions')
+st.write("""For some of the modeling below we use a beta distribution. Our choice is due to its 
+convenient shape, being bounded between 0 and 1, and tapering off smoothly at the boundaries.""")
 
+model_plot = None
 #initialize the model dataframe to an empty one if not already in the 
 #session state.
 if 'model_data_frame' not in st.session_state:
     st.session_state.model_data_frame = pd.DataFrame()
 
-col1, col2 = st.columns(2)
 
+st.subheader('Choose Your Parameters')
+my_cols_tuple = (7, 1, 7, 1, 7)
+col1, col2, col3, col4, col5 = st.columns(my_cols_tuple)
 with col1:
-
-    #request the user an optional random seed    
-    st.subheader('Random Seed')
-    seed_input = st.text_input("""Input an optional integer random seed or leave it blank.""",
+    # ************************************************************************
+    # st.subheader('Random Seed')
+    utils.write_custom_subheader('Random Seed')
+    seed_input = st.text_input("""Random seed (optional): pick one or leave it blank.""",
                                key = 'seed_input')
 
     # Check on random seed. Accept only numbers.
     seed_input = utils.check_random_seed_content(seed_input)
     optional_seed = seed_input if seed_input!= '' else None
     if optional_seed == None:
-        st.write(f"Random seed = {optional_seed}")
+        st.write(f"(Random seed = {optional_seed})")
 
     # TODO: be able to select number of days
     
-    # pick the neghborhood size
-    st.subheader('Neighborhood size')
+with col3:
+    # ************************************************************************
+    # st.subheader('Neighborhood size')
+    utils.write_custom_subheader('Neighborhood size')
     neighborhood_size = st.slider('How many people live in the neighborhood?', 
                                     min_value = 10, 
                                     max_value = 200, 
@@ -62,8 +71,10 @@ with col1:
                                     value = 70,
                                     key = 'nbhd')
 
-    # pick the fraction of initial composters as a percentage of the neighborhood size
-    st.subheader('Fraction of initial composters')
+with col5:
+    # ************************************************************************
+    # st.subheader('Fraction of initial composters')
+    utils.write_custom_subheader('Fraction of initial composters')
     frac_composters = st.slider('What is the % of composters at the beginning of the simulation?',
                                 min_value = 1, 
                                 max_value = 50, 
@@ -72,28 +83,34 @@ with col1:
                                 key = 'n_composters')
                                 
     num_composters = int(frac_composters*neighborhood_size/100)
-    st.write(f"({num_composters} composters)")
 
-    st.subheader('Spread of Personalities')
-    st.write(""" We create personality scores from 1 to 10 by sampling them from 
-                a symmetric beta distribution and multiplying the result by 10.
-                We choose this distribution because of its convenient shape
-                (bounded between 0 and 1, centered at 0.5) and because it tapers off smoothly at 
-                the boundaries.""")
-    xmax = 10
-    personality_spread = st.slider("""Choose the spread of this distribution, from narrow (1) to flat (10)""",
+my_cols_tuple = (7, 1, 7, 1, 7, 1, 7)
+col1, col2, col3, col4, col5, col6, col7 = st.columns(my_cols_tuple)
+
+with col1:
+    # ************************************************************************
+    # st.subheader('Spread of Personalities')
+    utils.write_custom_subheader('Spread of Personalities')
+    personality_xmax = 10
+    personality_spread = st.slider("""We create personality scores from 1 to 10 assuming 
+                                    a symmetric beta distribution and multiplying the result by 10.
+                                    Choose the spread of the distribution. You can go all the way 
+                                    from narrow (1) to flat (10).""",
                                     min_value = 1, 
-                                    max_value = xmax, 
+                                    max_value = personality_xmax, 
                                     value = 5)
     
-    utils.visualize_parameter_distr(personality_spread, xmax, 'personality_score', 'simmetric_beta')
+    utils.visualize_parameter_distr(personality_spread, personality_xmax, 'personality_score', 'simmetric_beta')
 
-    st.subheader('Sociability Margins')
-    st.write("""We enrich each personality by adding a 'margin'. 
-            This defines who people are willing to talk to. Two people will 
-            only converse if their personality margins (personality score +/- margin) overlap.
-            Margins are sampled from an asymmetric normal distribution centered at 0.""")
-    sociability_spread = st.slider('Choose the standard deviation of this distribution.',
+with col3:
+    # ************************************************************************
+    # st.subheader('Sociability Margins')
+    utils.write_custom_subheader('Sociability Margins')
+
+    sociability_spread = st.slider("""We add to each personality a 'margin'. 
+                                Two people will converse only if their personality score +/- margin overlap.
+                                We sample margins from a normal distribution. 
+                                Choose its standard deviation.""",
                                     value = float(1),
                                     min_value = float(0.5), 
                                     max_value = float(1.5), 
@@ -101,65 +118,73 @@ with col1:
 
     utils.visualize_parameter_distr(sociability_spread, 4, 'sociability_margin', 'normal')
 
-    
-    st.subheader('Encouragement skew')
-    st.write("""If someone already composts, how likely are they to encourage
-                other people to do the same? We model this probability via a beta distribution and you
-                can choose its skeweness.""")
+with col5:
+    # ************************************************************************
+    # st.subheader('Encouragement skew')
+    utils.write_custom_subheader('Encouragement Skew')
 
     # depending on the value 1 through 10, beta a = the value and b = 10-the value
-    xmax = 10
-    encouragement_skew = st.slider("""Choose its skeweness. Higher values mean more 
-                                    likely to encourage others.""", 
+    encouragement_xmax = 10
+    encouragement_skew = st.slider("""If someone already composts, how likely are they to encourage
+                                other people to do the same? 
+                                We model this probability via a beta distribution. 
+                                Choose its skeweness, where higher values mean more 
+                                likely to encourage others.""", 
                                     value = 5,
                                     min_value = 1, 
-                                    max_value = xmax)
-    utils.visualize_parameter_distr(encouragement_skew, xmax, 'probability_of_encouragement', 'beta')
+                                    max_value = encouragement_xmax)
+    utils.visualize_parameter_distr(encouragement_skew, encouragement_xmax, 'probability_of_encouragement', 'beta')
+    # ************************************************************************
 
-    st.subheader('Stubbornness skew')
-    st.write("""If someone doesn't compost, how likely are they to be convinced by a 
-            neighbor to start? We model this probability via a beta distribution and you
-            can choose its skeweness.""")
-    
-    xmax = 10
-    stubbornness_skew = st.slider("""Choose its skeweness. Higher values mean more 
-                                    likely to be convinced.""", 
+with col7:
+    # ************************************************************************    
+    # st.subheader('Stubbornness Skew')
+    utils.write_custom_subheader('Stubbornness Skew')
+    stubbornness_xmax = 10
+    stubbornness_skew = st.slider("""If someone doesn't compost, how likely are they to be convinced by a 
+                                neighbor to start? We model this probability via a beta distribution.
+                                Choose its skeweness, where higher values mean more likely to be convinced.""", 
                                     value = 3,
                                     min_value = 1, 
-                                    max_value = 10)
-    utils.visualize_parameter_distr(stubbornness_skew, xmax, 'probability_of_being_convinced', 'beta')
+                                    max_value = stubbornness_xmax)
+    utils.visualize_parameter_distr(stubbornness_skew, stubbornness_xmax, 'probability_of_being_convinced', 'beta')
 
-    model = setup.Interact(n_neighbors = neighborhood_size, n_already_composting = num_composters,
-                            personality_spread = personality_spread,
-                            sociability_spread = sociability_spread,
-                            encouragement_beta_a = encouragement_skew, encouragement_beta_b = 11 - encouragement_skew,
-                            stubbornness_beta_a = stubbornness_skew, stubbornness_beta_b = 11 - stubbornness_skew,
-                            days = 30, seed = optional_seed)
+    model = Interact(n_neighbors = neighborhood_size, 
+                    n_already_composting = num_composters,
+                    personality_spread = personality_spread,
+                    personality_xmax = personality_xmax, 
+                    sociability_spread = sociability_spread,
+                    encouragement_skew = encouragement_skew, 
+                    encouragement_xmax = encouragement_xmax,
+                    stubbornness_skew = stubbornness_skew, 
+                    stubbornness_xmax = stubbornness_xmax,                             
+                    days = 30, 
+                    seed = optional_seed)
 
-    for current_tick in range(model.ticks):
+    for thick_i in range(model.ticks):
         model.step()
         # print([n.compost for n in model1.neighbors])
 
-    model_data = model.datacollector.get_model_vars_dataframe().reset_index()
-    model_data['index'] = model_data['index'].divide(model_data['Neighborhood Size'])  # show day number rather than tick number
+#     model_data = model.datacollector.get_model_vars_dataframe().reset_index()
+#     model_data['index'] = model_data['index'].divide(model_data['Neighborhood Size'])  # show day number rather than tick number
 
-    model_plot = alt.Chart(model_data).mark_line().encode(x = alt.X('index', axis = alt.Axis(title = 'Day')),
-                                                            y = 'Number of Composters').\
-        encode(alt.Y('Number of Composters', scale = alt.Scale(domain = [0, neighborhood_size])))
+#     model_plot = alt.Chart(model_data).mark_line().encode(x = alt.X('index', axis = alt.Axis(title = 'Day')),
+#                                                             y = 'number_of_composters').\
+#         encode(alt.Y('number_of_composters', scale = alt.Scale(domain = [0, neighborhood_size])))
 
-with col2:
-    # st.write(st.session_state)
+# with col3:
+#     # st.write(st.session_state)
 
-    st.subheader('Number of composters over time')
-    if model_plot is not None:
-        st.altair_chart(model_plot, use_container_width = True)
+#     st.subheader('number_of_composters over time')
+#     if model_plot is not None:
+#         st.altair_chart(model_plot, use_container_width = True)
 
-    st.button('Collect data', on_click = retain_model_data)
-    st.write('Data frame dimensions:', st.session_state.model_data_frame.shape)
-    st.button('Reset data collection', on_click = remove_model_data)
-    st.download_button('Download collected data', data = st.session_state.model_data_frame.to_csv())
-    st.write('Note: the exported data is indexed by neighbors per day, meaning if there are 30 people in the '
-             'neighborhood, there will be 30*30 = 900 rows in the data set per simulation. This is because each neighbor '
-             'gets a chance to interact with another neighbor in a day before the day resets. You can easily modify '
-             'this dataset to show just the total number of composters at the end of each day.')
+#     st.button('Collect data', on_click = retain_model_data)
+#     st.write('Data frame dimensions:', st.session_state.model_data_frame.shape)
+#     st.button('Reset data collection', on_click = remove_model_data)
+#     st.download_button('Download collected data', data = st.session_state.model_data_frame.to_csv())
+#     st.write('Note: the exported data is indexed by neighbors per day, meaning if there are 30 people in the '
+#              'neighborhood, there will be 30*30 = 900 rows in the data set per simulation. This is because each neighbor '
+#              'gets a chance to interact with another neighbor in a day before the day resets. You can easily modify '
+#              'this dataset to show just the total number_of_composters at the end of each day.')
 
