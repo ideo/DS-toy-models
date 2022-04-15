@@ -1,3 +1,4 @@
+from os import stat
 import numpy as np
 import altair as alt
 import random
@@ -6,11 +7,6 @@ import src.utils as utils
 from mesa import Agent, Model
 from mesa.time import SimultaneousActivation, RandomActivation
 from mesa.datacollection import DataCollector
-
-def ranges_intersect(a, b):  # function to see if two agents can get along
-    if (a[0] <= b[1] and a[1] >= b[0]) or (b[0] <= a[1] and b[1] >= a[0]):
-        return True
-    else: return False
 
 
 class Neighbor(Agent):
@@ -39,10 +35,10 @@ class Neighbor(Agent):
                                                         model.encouragement_skew, 
                                                         False)
 
-        # each neighbor has stubbornness parameter, which is their probability of trying composting if they're encouraged
-        self.stubbornness = utils.sample_from_beta_distr(dummy_val, 
-                                                        model.stubbornness_xmax, 
-                                                        model.stubbornness_skew, 
+        # each neighbor has openness parameter, which is their probability of trying composting if they're encouraged
+        self.openness = utils.sample_from_beta_distr(dummy_val, 
+                                                        model.openness_xmax, 
+                                                        model.openness_skew, 
                                                         False)
         # whether or not they're matched with a conversational partner
         self.matched_for_conversation = False 
@@ -63,59 +59,146 @@ class Neighbor(Agent):
         return True  if self.unique_id in composters_list else False
         
 
-    def talk(self):  # find a match and talk to them.
-        # list of current options for neighbors to talk to:
-        talk_options = [n for n in self.model.neighbors if n.unique_id != self.unique_id and not n.matched_for_conversation]
-        # print('self:', self.unique_id, 'options:', [n.unique_id for n in talk_options])
-        attempts = min(5, len(talk_options))  # limit attempts to find a convo partner to 5 just for simplicity right now
-        neighbor = None
-        while not self.matched_for_conversation and attempts > 0:
-            if len(talk_options) != 0:  # if there are remaining options for neighbors to interact with:
-                neighbor = np.random.choice(talk_options)  # sample randomly from remaining neighbors
-                # print('trying', neighbor.unique_id)
-                # if their sociability margins overlap:
-                self_personality_window = [self.personality - self.sociability_margin, self.personality + self.sociability_margin]
-                neighbor_personality_window = [neighbor.personality - neighbor.sociability_margin, neighbor.personality + neighbor.sociability_margin]
-                if ranges_intersect(self_personality_window, neighbor_personality_window):  # if they're compatible:
-                    # get neighbor's ID
-                    neighbor_id = neighbor.unique_id
-                    # print('tick', self.model.current_tick, ':', self.unique_id, 'matched with', neighbor_id)
-                    # mark self and partner as matched
-                    self.matched_for_conversation = True
-                    self.model.neighbors[neighbor_id].matched_for_conversation = True
-                    talk_options.remove(neighbor)
-                else:
-                    talk_options.remove(neighbor)
-                    neighbor = None  # if not compatible, reset neighbor to none and remove them from options
-            if not self.matched_for_conversation:
-                attempts -= 1
-
-        # the person who initiates contact is the one who "knows" which neighbor they're matched with
-        # so they have to process the transaction
-        if neighbor is not None:  # if didn't give up on finding a match after 5 attempts:
-            # TODO: maybe turn this into a function since it repeats
-            if neighbor.compost and not self.compost:  # if neighbor already composts but self doesn't:
-                # use neighbor's encouragement probability to determine if they talk about composting
-                encourage = np.random.binomial(1, neighbor.encouragement)
-                if encourage == 1:  # if encouraged, self might be converted:
-                    convert = np.random.binomial(1, self.stubbornness)
-                    if convert == 1:  # if converted, change compost status to True
-                        self.compost = True
-            elif not neighbor.compost and self.compost:  # if neighbor doesn't compost but self does:
-                # use own encouragement probability to determine if self talks about composting
-                encourage = np.random.binomial(1, self.encouragement)
-                if encourage == 1:  # if encourages neighbor, they might be converted:
-                    convert = np.random.binomial(1, neighbor.stubbornness)
-                    if convert == 1: # if converted, change compost status to True
-                        neighbor.compost = True
-
-        # if either both already compost or both don't, then nothing happens
-
+        
     def step(self):
-        # each neighbor has a "turn" to interact when the current tick modulo the number of agents is the neighbor's index/ID.
-        if self.model.current_tick % self.model.n_neighbors == self.unique_id and not self.matched_for_conversation:
-            # print(self.unique_id)
-            self.talk()
-        # make sure they have a way to reset matched status for each step:
+        """This method describes what do they do at each step (tick) 
+        of the simulation.
+        """
+        # Each day has n_neighbors ticks.
+        # Each neighbor has a "turn" to interact when the 
+        # current tick modulo the number of agents is the neighbor's ID, provided
+        # it wasn't matched for a convo already.
+        if self.model.current_tick % self.model.n_neighbors == self.unique_id and \
+            not self.matched_for_conversation:
+            neighbor = self.find_a_match()
+            if self.matched_for_conversation:
+                self.talk(neighbor)
 
+    # TODO: make attempts_limit a parameter people can play with in a side bar
+    def find_a_match(self, attempts_limit = 5):
+        """ This function finds a match for neighbors that aren't matched yet
+        """
+        
+        # list of other and unmatched neighbors to talk to:
+        potential_partners = [n for n in self.model.neighbors \
+                                if n.unique_id != self.unique_id \
+                                and not n.matched_for_conversation]
+        
+        #if there are no potential partners do nothing.
+        if len(potential_partners) == 0: pass
+
+        print(f"self: {self.unique_id}, potential_partners: {[n.unique_id for n in potential_partners]}")
+
+        # For simplicity, let's limit the interaction to 5 people
+        attempts = min(attempts_limit, len(potential_partners))  
+                
+        for i in range(attempts):            
+            
+            # Pick a neighbor at random
+            neighbor = np.random.choice(potential_partners)  
+
+            # Check if self and neighbor are compatible (i.e., if their personalities windows overlap)
+            # If so, mark them as matched and break the loop
+            if self.check_personalities_overlap(neighbor):
+
+                print(f"tick {self.model.current_tick} - {self.unique_id} matched with {neighbor.unique_id}")
+                self.matched_for_conversation = True
+                self.model.neighbors[neighbor.unique_id].matched_for_conversation = True
+                return neighbor
+            else:
+                # if it's not a mach, remove the neighbor from the list of potential partners and move to the next
+                potential_partners.remove(neighbor)
+        
+        return None
+            
+    
+    def talk(self, neighbor): 
+        """This function process the interaction between self and the neighbor and 
+        computes if either one converts to composting or not.
+
+        Args:
+            neighbor agent
+        """
+        
+        #if either both already compost or both don't, then nothing happens
+        if (neighbor.compost and self.compost) or \
+           (not neighbor.compost and not self.compost): 
+           pass
+        
+        # if neighbor already composts but self doesn't:
+        if neighbor.compost and not self.compost:
+            if self.will_convert(neighbor, self):
+                self.compost = True
+        
+        # if neighbor doesn't compost but self does:
+        elif not neighbor.compost and self.compost:  
+            if self.will_convert(self, neighbor):
+                neighbor.compost = True    
+    
+    @staticmethod
+    def will_convert(encourager, candidate_to_compost):
+        """ This function uses 1) the encourager probability to determine
+        if they talk about composting and 2) the candidate openness probability 
+        to determine if they'll convert to compost.
+
+        Args:
+            encourager (neighbor object)
+            candidate_to_compost (neighbor object)
+
+        Returns:
+            boolean on whether conversion occurs.
+        """
+        encourage = np.random.binomial(1, encourager.encouragement)
+        convert = np.random.binomial(1, candidate_to_compost.openness)
+
+        if encourage == 1 and convert == 1:
+            return True
+        else:
+            False
+
+
+    def check_personalities_overlap(self, neighbor):
+        """This function computes the personality window of self and
+        a neighbor and check for overlap
+
+        Args:
+            neighbor (object)
+
+        Returns:
+            boolean: whether the personalities of self and neighbor overlap
+        """
+        # Check if their personalities windows overlap
+        self_window = [self.personality - self.sociability_margin, 
+                       self.personality + self.sociability_margin]
+
+        neighbor_window = [neighbor.personality - neighbor.sociability_margin, 
+                           neighbor.personality + neighbor.sociability_margin]
+        
+        return self.ranges_intersect(self_window, neighbor_window)
+
+
+    @staticmethod
+    def ranges_intersect(a, b):
+        """This function checks if two intervals overlap
+
+        Args:
+            a (tuple): interval 1
+            b (tuple): interval 2
+
+        Returns:
+            boolean on whether the intervals overlap
+
+        a0|------------|a1
+            b0|-----------------|b1
+
+            a0|------------|a1
+         b0|------|b1
+
+
+        """
+
+        if (a[0] <= b[1] and a[1] >= b[0]) or (b[0] <= a[1] and b[1] >= a[0]):
+            return True
+        else: 
+            return False
 

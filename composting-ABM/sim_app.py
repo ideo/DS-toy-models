@@ -11,12 +11,6 @@ from src.interact import Interact
 st.set_page_config(layout = 'wide')
 
 
-def retain_model_data():  # saves model data to an accumulating data frame each time the collect button is pressed
-    st.session_state.model_data_frame = st.session_state.model_data_frame.append(model_data)
-
-def remove_model_data():  # resets manual data collection to empty data frame
-    st.session_state.model_data_frame = pd.DataFrame()
-
 st.header('How quickly can a neighborhood adopt the practice of composting their food scraps?')
 st.write("""People like to pat themselves on the back when they start 
         doing something eco-friendly like composting, but how impactful 
@@ -39,7 +33,7 @@ model_plot = None
 #initialize the model dataframe to an empty one if not already in the 
 #session state.
 if 'model_data_frame' not in st.session_state:
-    st.session_state.model_data_frame = pd.DataFrame()
+    st.session_state["model_data_frame"] = pd.DataFrame()
 
 
 st.subheader('Choose Your Parameters')
@@ -138,53 +132,59 @@ with col5:
 
 with col7:
     # ************************************************************************    
-    # st.subheader('Stubbornness Skew')
-    utils.write_custom_subheader('Stubbornness Skew')
-    stubbornness_xmax = 10
-    stubbornness_skew = st.slider("""If someone doesn't compost, how likely are they to be convinced by a 
+    # st.subheader('Openness Skew')
+    utils.write_custom_subheader('Openness Skew')
+    openness_xmax = 10
+    openness_skew = st.slider("""If someone doesn't compost, how likely are they to be convinced by a 
                                 neighbor to start? We model this probability via a beta distribution.
                                 Choose its skeweness, where higher values mean more likely to be convinced.""", 
                                     value = 3,
                                     min_value = 1, 
-                                    max_value = stubbornness_xmax)
-    utils.visualize_parameter_distr(stubbornness_skew, stubbornness_xmax, 'probability_of_being_convinced', 'beta')
+                                    max_value = openness_xmax)
+    utils.visualize_parameter_distr(openness_skew, openness_xmax, 'probability_of_being_convinced', 'beta')
 
-    model = Interact(n_neighbors = neighborhood_size, 
-                    n_already_composting = num_composters,
-                    personality_spread = personality_spread,
-                    personality_xmax = personality_xmax, 
-                    sociability_spread = sociability_spread,
-                    encouragement_skew = encouragement_skew, 
-                    encouragement_xmax = encouragement_xmax,
-                    stubbornness_skew = stubbornness_skew, 
-                    stubbornness_xmax = stubbornness_xmax,                             
-                    days = 30, 
-                    seed = optional_seed)
+model = Interact(n_neighbors = neighborhood_size, 
+                n_already_composting = num_composters,
+                personality_spread = personality_spread,
+                personality_xmax = personality_xmax, 
+                sociability_spread = sociability_spread,
+                encouragement_skew = encouragement_skew, 
+                encouragement_xmax = encouragement_xmax,
+                openness_skew = openness_skew, 
+                openness_xmax = openness_xmax,                             
+                days = 30, 
+                seed = optional_seed)
 
-    for thick_i in range(model.ticks):
-        model.step()
-        # print([n.compost for n in model1.neighbors])
+# run themodel
+for thick_i in range(model.ticks):
+    model.step()
 
-#     model_data = model.datacollector.get_model_vars_dataframe().reset_index()
-#     model_data['index'] = model_data['index'].divide(model_data['Neighborhood Size'])  # show day number rather than tick number
+# collect the data
+model_data = model.datacollector.get_model_vars_dataframe().reset_index()
 
-#     model_plot = alt.Chart(model_data).mark_line().encode(x = alt.X('index', axis = alt.Axis(title = 'Day')),
-#                                                             y = 'number_of_composters').\
-#         encode(alt.Y('number_of_composters', scale = alt.Scale(domain = [0, neighborhood_size])))
+# show day number rather than tick number
+model_data['day'] = model_data['index'].divide(model_data['neighborhood_size'])  
 
-# with col3:
-#     # st.write(st.session_state)
+# ************************************************************************    
+st.subheader('number_of_composters over time')
 
-#     st.subheader('number_of_composters over time')
-#     if model_plot is not None:
-#         st.altair_chart(model_plot, use_container_width = True)
+my_cols_tuple = (1, 1)
+col1, col2 = st.columns(my_cols_tuple)
 
-#     st.button('Collect data', on_click = retain_model_data)
-#     st.write('Data frame dimensions:', st.session_state.model_data_frame.shape)
-#     st.button('Reset data collection', on_click = remove_model_data)
-#     st.download_button('Download collected data', data = st.session_state.model_data_frame.to_csv())
-#     st.write('Note: the exported data is indexed by neighbors per day, meaning if there are 30 people in the '
-#              'neighborhood, there will be 30*30 = 900 rows in the data set per simulation. This is because each neighbor '
-#              'gets a chance to interact with another neighbor in a day before the day resets. You can easily modify '
-#              'this dataset to show just the total number_of_composters at the end of each day.')
+with col1:
+    utils.plot_composters_over_time(model_data, neighborhood_size)
+
+with col2:
+    st.button('Collect data', on_click = utils.retain_model_data(model_data))
+    st.write(f"Data frame dimensions = {st.session_state['model_data_frame'].shape}")
+    st.write(f"")
+    st.button('Reset data collection', on_click = utils.remove_model_data())
+    st.download_button('Download collected data', data = st.session_state["model_data_frame"].to_csv())
+    st.write("""Note: the exported data is indexed by neighbors per day, 
+            meaning if there are 30 people in the neighborhood, 
+            there will be 30*30 = 900 rows in the data set per simulation. 
+            This is because each neighbor gets a chance to interact with another 
+            neighbor in a day before the day resets. You can easily modify 
+            this dataset to show just the total number_of_composters at the end 
+            of each day.""")
 

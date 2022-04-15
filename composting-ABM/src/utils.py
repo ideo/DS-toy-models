@@ -125,3 +125,30 @@ def write_custom_subheader(text):
     """
     custom_title = '<p style="font-size: 24; font-weight: bold">'+text+'</p>'
     st.markdown(custom_title, unsafe_allow_html=True)    
+
+def plot_composters_over_time(data, neighborhood_size):
+    """This function plots the number of composters over time
+
+    Args:
+        data (dataframe): dataframe with model data
+        neighborhood_size (int): size of the neighborood
+    """
+
+    data_plot = alt.Chart(data).mark_line().encode(
+                                            x = 'day',
+                                            y = alt.Y('number_of_composters', scale = alt.Scale(domain = [0, neighborhood_size]))
+                                            )
+
+    if data_plot is not None:
+        st.altair_chart(data_plot, use_container_width = True)
+
+def retain_model_data(data):
+    """This function saves model data to an accumulating data frame each time
+     the collect button is pressed
+    """
+    st.session_state['model_data_frame'] = st.session_state["model_data_frame"].append(data)
+
+def remove_model_data():
+    """This function resets manual data collection to empty data frame"""
+    st.session_state['model_data_frame'] = pd.DataFrame()
+

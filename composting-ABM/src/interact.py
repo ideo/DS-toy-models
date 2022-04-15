@@ -14,8 +14,8 @@ class Interact(Model):
                 sociability_spread,
                 encouragement_skew, 
                 encouragement_xmax, 
-                stubbornness_skew,
-                stubbornness_xmax,
+                openness_skew,
+                openness_xmax,
                 days,
                 seed = None):
 
@@ -26,12 +26,6 @@ class Interact(Model):
         # Then once everyone has gotten a chance to match 
         # (i.e. when the tick is a multiple of the number of people in the neighborhood) 
         # the day restarts.
-
-        # PREVIOUS LINE OF THINKING FROM FRA - to reconsider after I have gone through the whole code.
-        # We consider 30 thicks per person (30 days per person). 
-        # When the number of thicks is a multiple of the number of people 
-        # that means that everyone is on the same day --> 
-        # we reset their match status and allow people to interact again
         self.ticks = days * n_neighbors  
         self.current_tick = 1
 
@@ -51,8 +45,8 @@ class Interact(Model):
         self.encouragement_skew = encouragement_skew
         self.encouragement_xmax = encouragement_xmax
 
-        self.stubbornness_skew = stubbornness_skew
-        self.stubbornness_xmax = stubbornness_xmax
+        self.openness_skew = openness_skew
+        self.openness_xmax = openness_xmax
 
         self.seed = seed
 
@@ -67,7 +61,7 @@ class Interact(Model):
                 'personality_spread': lambda m: m.personality_spread,
                 'sociability_spread': lambda m: m.sociability_spread,
                 'encouragement_skew': lambda m: m.encouragement_skew,
-                'stubbornness_skew': lambda m: m.stubbornness_skew,
+                'openness_skew': lambda m: m.openness_skew,
                 'number_of_composters': self.data_collector_get_composters
             })
         if self.seed is not None:
@@ -106,7 +100,8 @@ class Interact(Model):
 
 
     def step(self):
-        """This function tells the scheduler to move 1 step forward
+        """This function tells the scheduler to move 1 step forward, 
+        at which point, the step() function of all agents are called.
         """
         # If the step is a multiple of the total number of neighbors,
         # it means that every person is on the same day. 
