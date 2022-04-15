@@ -87,7 +87,7 @@ class Neighbor(Agent):
         #if there are no potential partners do nothing.
         if len(potential_partners) == 0: pass
 
-        print(f"self: {self.unique_id}, potential_partners: {[n.unique_id for n in potential_partners]}")
+        # print(f"self: {self.unique_id}, potential_partners: {[n.unique_id for n in potential_partners]}")
 
         # For simplicity, let's limit the interaction to 5 people
         attempts = min(attempts_limit, len(potential_partners))  
@@ -101,7 +101,7 @@ class Neighbor(Agent):
             # If so, mark them as matched and break the loop
             if self.check_personalities_overlap(neighbor):
 
-                print(f"tick {self.model.current_tick} - {self.unique_id} matched with {neighbor.unique_id}")
+                # print(f"tick {self.model.current_tick} - {self.unique_id} matched with {neighbor.unique_id}")
                 self.matched_for_conversation = True
                 self.model.neighbors[neighbor.unique_id].matched_for_conversation = True
                 return neighbor

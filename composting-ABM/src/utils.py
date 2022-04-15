@@ -151,4 +151,3 @@ def retain_model_data(data):
 def remove_model_data():
     """This function resets manual data collection to empty data frame"""
     st.session_state['model_data_frame'] = pd.DataFrame()
-

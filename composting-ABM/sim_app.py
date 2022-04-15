@@ -175,11 +175,18 @@ with col1:
     utils.plot_composters_over_time(model_data, neighborhood_size)
 
 with col2:
-    st.button('Collect data', on_click = utils.retain_model_data(model_data))
-    st.write(f"Data frame dimensions = {st.session_state['model_data_frame'].shape}")
+    # st.button('Collect data', on_click = utils.retain_model_data(model_data))
+    
+    st.download_button('Download collected data', data = model_data.to_csv())
+    st.write(f"Data frame dimensions = {model_data.shape}")
     st.write(f"")
-    st.button('Reset data collection', on_click = utils.remove_model_data())
-    st.download_button('Download collected data', data = st.session_state["model_data_frame"].to_csv())
+
+    # st.button('I want to reset the data before downloading them!', on_click = utils.allow_reset())
+
+    # if st.session_state['allow_data_reset']:
+    #     st.button('Reset data collection', on_click = utils.remove_model_data())
+    #     st.write(f"Data frame dimensions = {st.session_state['model_data_frame'].shape}")
+
     st.write("""Note: the exported data is indexed by neighbors per day, 
             meaning if there are 30 people in the neighborhood, 
             there will be 30*30 = 900 rows in the data set per simulation. 
@@ -187,4 +194,3 @@ with col2:
             neighbor in a day before the day resets. You can easily modify 
             this dataset to show just the total number_of_composters at the end 
             of each day.""")
-
