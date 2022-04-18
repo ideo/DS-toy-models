@@ -13,4 +13,14 @@ such propagation depends on the level of compatibility between neighbors and a t
 - Run the script via `pipenv run streamlit run sim_app.py`
 - Interact with the simulation by clicking on the local URL that appears in the terminal at runtime. You can also share this simulation externally via the network URL.
 
+# Links and Resources
+### Learning Mesa
+- https://towardsdatascience.com/intro-to-agent-based-modeling-3eea6a070b72 Supermarket cashier model
+- https://dmnfarrell.github.io/bioinformatics/abm-mesa-python COVID infection model
+
+### Agent-Based Modeling
+- One of the most famous ABMs: the Schelling segregation model https://ncase.me/polygons/ 
+- Agent-based modeling: Methods and techniques for simulating human systems https://www.pnas.org/doi/10.1073/pnas.082080899 
+- Simple or complicated agent-based models? A complicated issue (doi: 10.1016/j.envsoft.2016.09.006) http://manuscript.elsevier.com/S1364815216306041/pdf/S1364815216306041.pdf
+
 # Note: Still needs to be tested for user feedback
