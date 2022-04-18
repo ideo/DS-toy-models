@@ -82,19 +82,19 @@ def visualize_parameter_distr(param, xmax, param_name, distribution):
 
     Args:
         personality_spread (int): distribution spread
-        xmax (int): max value of the slider
+        xmax (int): max value of the x axis
         param_name (str): name of the parameter for viz purposed
         distribution (str): distribution to sample from
     """
 
     if 'beta' in distribution:
         simmetric = True if 'simmetric' in distribution else False        
-        distr_df = pd.DataFrame([(x*xmax, 
+        distr_df = pd.DataFrame([(x,
                                   sample_from_beta_distr(x, xmax, param, simmetric, output = 'pdf')) 
                                 for x in np.arange(0, 1, 0.001)])
     
     elif distribution == 'normal':
-        distr_df = pd.DataFrame([(x*xmax, 
+        distr_df = pd.DataFrame([(x,
                                   sample_from_normal_distr(x, param, output = 'pdf')) 
                                 for x in np.arange(0, xmax, 0.001)])
 

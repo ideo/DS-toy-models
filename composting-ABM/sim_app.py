@@ -49,8 +49,7 @@ with col1:
     # Check on random seed. Accept only numbers.
     seed_input = utils.check_random_seed_content(seed_input)
     optional_seed = seed_input if seed_input!= '' else None
-    if optional_seed == None:
-        st.write(f"(Random seed = {optional_seed})")
+    st.write(f"(Random seed = {optional_seed})")
 
     # TODO: be able to select number of days
     
@@ -66,6 +65,7 @@ with col3:
                                     key = 'nbhd')
 
 with col5:
+    # ************************************************************************
     # ************************************************************************
     # st.subheader('Fraction of initial composters')
     utils.write_custom_subheader('Fraction of initial composters')
