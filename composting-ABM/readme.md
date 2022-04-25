@@ -6,7 +6,10 @@
 
 # About this toy model
 In this toy model we use Mesa to simulate the process of a positive behavior (like composting) moving through a neighborhood. Via a streamlit app, we allow the user to explore how
-such propagation depends on the level of compatibility between neighbors and a the propensity of neighbors to talk about that behavior with others / adopt the behavior if encouraged to.
+such propagation depends on the level of compatibility between neighbors and a the propensity of neighbors to talk about that behavior with others / adopt the behavior if encouraged to do so.
+
+
+The behavioral model used here is a toy model with no scientific ground, but it could be improved to include a more complex one.
 
 # How to run it
 - Install the required packages from pipenv via `pipenv install`.
@@ -23,4 +26,6 @@ such propagation depends on the level of compatibility between neighbors and a t
 - Agent-based modeling: Methods and techniques for simulating human systems https://www.pnas.org/doi/10.1073/pnas.082080899 
 - Simple or complicated agent-based models? A complicated issue (doi: 10.1016/j.envsoft.2016.09.006) http://manuscript.elsevier.com/S1364815216306041/pdf/S1364815216306041.pdf
 
-# Note: Still needs to be tested for user feedback
+
+# WARNING - Streamlit & Pandas Version Conflicts
+Streamlit will let you develop locally with the latest python (3.9.x) but can only host up to python 3.7.12. The latest pandas has moved on from python 3.7. All this is to say, please don't change the python and pandas versions specified in the pipenv files.
