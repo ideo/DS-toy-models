@@ -7,7 +7,9 @@
 # About this toy model
 In this toy model we use Mesa to simulate the process of a positive behavior (like composting) moving through a neighborhood. Via a streamlit app, we allow the user to explore how
 such propagation depends on the level of compatibility between neighbors and a the propensity of neighbors to talk about that behavior with others / adopt the behavior if encouraged to do so.
-The behavioral model underneath the simulation is a toy model with no scientific ground, but it could be improved to include a more complex behavioral model.
+
+
+The behavioral model used here is a toy model with no scientific ground, but it could be improved to include a more complex one.
 
 # How to run it
 - Install the required packages from pipenv via `pipenv install`.
