@@ -1,7 +1,10 @@
 import streamlit as st
+import os
 from .guacamoles import Guacamoles
 
 from .written_content import STORY, ABOUT_THE_SIMULATION
+
+images_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'images'))
 
 COLORS = {
     "blue":     "#4c78a8",
@@ -197,7 +200,7 @@ def show_winner(sim, section_title):
 
     #Showing output once the simulation is ran
     if start_btn:        
-        col1.image(f"images/guac_icon_0.png", width=100)
+        col1.image(f"{images_path}/guac_icon_0.png", width=100)
         col2.metric(f"The winner is: ", sim.winner)
         col3.metric(f"The true winner is: ", sim.true_winner)
         

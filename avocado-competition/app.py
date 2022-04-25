@@ -7,7 +7,7 @@ from src.simulation import Simulation
 #set page initial configuration
 st.set_page_config(
     page_title="Guacamole Contest",
-    page_icon="img/avocado-emoji.png",
+    page_icon="images/avocado-emoji.png",
     initial_sidebar_state="collapsed")
 
 #extract sidebar parameters
