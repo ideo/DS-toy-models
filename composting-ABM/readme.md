@@ -23,4 +23,5 @@ such propagation depends on the level of compatibility between neighbors and a t
 - Agent-based modeling: Methods and techniques for simulating human systems https://www.pnas.org/doi/10.1073/pnas.082080899 
 - Simple or complicated agent-based models? A complicated issue (doi: 10.1016/j.envsoft.2016.09.006) http://manuscript.elsevier.com/S1364815216306041/pdf/S1364815216306041.pdf
 
-# Note: Still needs to be tested for user feedback
+# WARNING - Streamlit & Pandas Version Conflicts
+Streamlit will let you develop locally with the latest python (3.9.x) but can only host up to python 3.7.12. The latest pandas has moved on from python 3.7. All this is to say, please don't change the python and pandas versions specified in the pipenv files.
