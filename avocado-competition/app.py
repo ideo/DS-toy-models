@@ -63,7 +63,7 @@ if st.session_state[section_title]:
     lg.write_story('simulation_1_conclusion')
     lg.write_custom_subsubheader("'A Lot Of Contenders' Deep Dive")
 
-    st.image(f"{images_path}/param_space_scan_totalSim100_a-lot-of-contenders_sum_viz.png")
+    st.image(f"{images_path}/param_space_scan_totalSim100_a-lot-of-contenders_sum_20220408_viz.png")
     lg.write_story('simulation_1_deep_dive')
         
     lg.write_custom_subheader("3.2. Scenario 2 - Tasting and Voting for a Subset")
