@@ -1,13 +1,15 @@
 import streamlit as st
 import src.logic as lg
-
+import os
 from src.simulation import Simulation
+
+images_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'images'))
 
 
 #set page initial configuration
 st.set_page_config(
     page_title="Guacamole Contest",
-    page_icon="images/avocado-emoji.png",
+    page_icon=f"{images_path}/avocado-emoji.png",
     initial_sidebar_state="collapsed")
 
 #extract sidebar parameters
@@ -61,7 +63,7 @@ if st.session_state[section_title]:
     lg.write_story('simulation_1_conclusion')
     lg.write_custom_subsubheader("'A Lot Of Contenders' Deep Dive")
 
-    st.image(f"images/param_space_scan_totalSim100_a-lot-of-contenders_sum_viz.png")
+    st.image(f"{images_path}/param_space_scan_totalSim100_a-lot-of-contenders_sum_viz.png")
     lg.write_story('simulation_1_deep_dive')
         
     lg.write_custom_subheader("3.2. Scenario 2 - Tasting and Voting for a Subset")
@@ -90,7 +92,7 @@ if st.session_state[section_title]:
 
         lg.write_custom_subsubheader("'A Lot Of Contenders' Deep Dive")
 
-        st.image(f"images/param_space_scan_guacs_subset_totalSim200_townpeople100-200-300_a-lot-of-contenders_condorcet_20200408_viz.png")
+        st.image(f"{images_path}/param_space_scan_guacs_subset_totalSim200_townpeople100-200-300_a-lot-of-contenders_condorcet_20200408_viz.png")
         lg.write_story('simulation_2_deep_dive')
 
         st.subheader("4. Conclusions")
