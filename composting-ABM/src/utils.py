@@ -57,6 +57,7 @@ def sample_from_beta_distr(x, xmax, param, simmetric, output = 'value'):
         pdf = beta.pdf(x, a = my_a, b = my_b)
         value = np.random.beta(my_a, my_b)
 
+    
     return value if output == 'value' else pdf
 
 def sample_from_normal_distr(x, std, mean = 0, output = 'value'):
@@ -135,8 +136,7 @@ def plot_composters_over_time(data, neighborhood_size):
 
     data_plot = alt.Chart(data).mark_line().encode(
                                             x = 'day',
-                                            y = alt.Y('number_of_composters', scale = alt.Scale(domain = [0, neighborhood_size])),
-                                            # tooltip = ['day', 'number_of_composters']
+                                            y = alt.Y('number_of_composters', scale = alt.Scale(domain = [0, neighborhood_size]))
                                             )
 
     if data_plot is not None:
