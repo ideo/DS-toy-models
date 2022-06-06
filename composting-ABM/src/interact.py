@@ -56,25 +56,19 @@ class Interact(Model):
         # is the input model.
         self.datacollector = DataCollector(
             model_reporters = {
-                # "agent_count": lambda m: m.schedule.get_agent_count(),
+                "agent_count": lambda m: m.schedule.get_agent_count(), 
                 'neighborhood_size': lambda m: m.n_neighbors,
                 'personality_spread': lambda m: m.personality_spread,
                 'sociability_spread': lambda m: m.sociability_spread,
                 'encouragement_skew': lambda m: m.encouragement_skew,
                 'openness_skew': lambda m: m.openness_skew,
-                'initial_number_of_composters': lambda m: m.n_already_composting,
                 'number_of_composters': self.data_collector_get_composters
             })
         if self.seed is not None:
-            np.random.seed(self.seed)
             random.seed(self.seed)
 
         self.create_neighbor_agents()
 
-        # testing to figure out why graph not updating when you change personality spread or sociability margin
-        # print([n.personality for n in self.neighbors])
-        # print([n.sociability_margin for n in self.neighbors])
-        # print([n.encouragement for n in self.neighbors])
 
     def create_neighbor_agents(self):
         """This function creates the neighbor agents
@@ -84,8 +78,7 @@ class Interact(Model):
         self.neighbors = []  
 
         # randomly pick people who are already composting
-        who_already_composting = np.random.choice(self.n_neighbors, self.n_already_composting, replace = False)
-        print(who_already_composting)
+        who_already_composting = np.random.choice(self.n_neighbors, self.n_already_composting)        
         
         for n in range(self.n_neighbors):
 
@@ -95,20 +88,15 @@ class Interact(Model):
             self.neighbors.append(neighbor)            
             if n in who_already_composting:
                 self.neighbors[n].compost = True
-                print(n)
-            print(sum([n.compost for n in self.neighbors]), n)
-
-
 
     def reset_match_status(self):
         """ This function resets the matched status and make everyone available to chat again.
         """
         for n in range(self.n_neighbors):
             self.neighbors[n].matched_for_conversation = False
-        # print(f"********************")
-        # print(f"It's day {self.current_tick / self.n_neighbors} -> reset availability of neighbors")
-        #
-        # print(f"********************")
+        print(f"********************")
+        print(f"It's day {self.current_tick / self.n_neighbors} -> reset availability of neighbors")
+        print(f"********************")
 
 
     def step(self):
@@ -120,7 +108,6 @@ class Interact(Model):
         # We thus reset matched status and make everyone available to chat again.
         if self.current_tick % self.n_neighbors == 0:
             self.reset_match_status()
-            # print(sum([n.compost for n in self.neighbors]))
 
         # data collection
         self.datacollector.collect(self)

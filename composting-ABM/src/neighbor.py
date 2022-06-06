@@ -14,8 +14,7 @@ class Neighbor(Agent):
         super().__init__(unique_id, model)
 
         self.unique_id = unique_id
-        self.compost = False
-        # self.compost = self.assign_if_compost(model)
+        self.compost = self.assign_if_compost(model)
 
         # neighbor has a personality score which represents "what kind of person they are"        
         dummy_val = 0
@@ -44,24 +43,20 @@ class Neighbor(Agent):
         # whether or not they're matched with a conversational partner
         self.matched_for_conversation = False 
 
-    # def assign_if_compost(self, model):  # removed this because we had duplicate methods of determining how many people composted
-    #     """This function determines whether a neighbor composts.
-    #     If a random seed is assigned, the list of IDs that composts is fixed
-    #     otherwise it is randomly generated
-    #
-    #     Args:
-    #         mesa model
-    #     """
-    #
-    #     '''
-    #     if model.seed is not None:
-    #         np.random.seed(model.seed)
-    #         random.seed(model.seed)
-    #     '''
-    #
-    #     composters_list = random.sample(range(model.n_neighbors), 10)
-    #
-    #     return True  if self.unique_id in composters_list else False
+    def assign_if_compost(self, model):
+        """This function determines whether a neighbor composts. 
+        If a random seed is assigned, the list of IDs that composts is fixed
+        otherwise it is randomly generated
+
+        Args:
+            mesa model
+        """                
+        if model.seed is not None:
+            random.seed(model.seed)
+
+        composters_list = random.sample(range(model.n_neighbors), 10)
+
+        return True  if self.unique_id in composters_list else False
         
 
         
