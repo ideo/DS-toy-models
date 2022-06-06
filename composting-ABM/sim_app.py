@@ -19,11 +19,19 @@ st.write("""People like to pat themselves on the back when they start
         Tinker with the parameters representing neighbors' willingness
         to encourage others to compost, and their willingness to try composting 
         if encouraged, to see how close the neighborhood gets to completely converting 
-        to composting within a 30-day period. 
-        Several neighbors are already composting at the start of each simulation. 
-        Each day, neighbors randomly meet other neighbors and decide to pair up and 
-        chat if their personalities are compatible. What conditions are necessary for 
-        composting to really take off in the neighborhood?""")
+        to composting within a 30-day period. """)
+
+st.subheader('How the neighbors interact')
+st.write("""Several neighbors are already composting at the start of each simulation. 
+        Each neighbor has a "personality score" (from 1 to 10) and a margin around that personality score that influences
+        whether they will interact with another person.
+        Each day, we iterate through the neighbors, and each person gets one chance to chat with another random person 
+        in the neigborhood who is not already paired. A pair only decides to chat if their personalities are compatible
+        (i.e. their personality margins overlap).
+        Each person has a probability of encouraging someone else to compost (if they already compost), 
+        or a probability of being convinced to compost (if they don't already compost).
+        These probabilities are determined randomly based on the encouragement and openness distributions, manipulable below. 
+        What conditions are necessary for composting to really take off in the neighborhood?""")
 
 st.subheader('About some assumptions')
 st.write("""For some of the modeling below we use a beta distribution. Our choice is due to its 
