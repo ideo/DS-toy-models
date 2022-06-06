@@ -43,7 +43,8 @@ with col1:
     # ************************************************************************
     # st.subheader('Random Seed')
     utils.write_custom_subheader('Random Seed')
-    seed_input = st.text_input("""Random seed (optional): pick one or leave it blank.""",
+    seed_input = st.text_input("""Random seed (optional): pick an integer or leave it blank. Choosing a seed ensures that the results 
+    will be consistent as long as the same parameter values are chosen.""",
                                key = 'seed_input')
 
     # Check on random seed. Accept only numbers.
@@ -77,6 +78,7 @@ with col5:
                                 key = 'n_composters')
                                 
     num_composters = int(frac_composters*neighborhood_size/100)
+    print('num composters', num_composters)
 
 my_cols_tuple = (7, 1, 7, 1, 7, 1, 7)
 col1, col2, col3, col4, col5, col6, col7 = st.columns(my_cols_tuple)
@@ -105,12 +107,12 @@ with col3:
                                 Two people will converse only if their personality score +/- margin overlap.
                                 We sample margins from a normal distribution. 
                                 Choose its standard deviation.""",
-                                    value = float(1),
-                                    min_value = float(0.5), 
-                                    max_value = float(1.5), 
+                                    value = float(0.1),
+                                    min_value = float(0.1),
+                                    max_value = float(0.8),
                                     step = 0.1)
 
-    utils.visualize_parameter_distr(sociability_spread, 4, 'sociability_margin', 'normal')
+    utils.visualize_parameter_distr(sociability_spread, 3, 'sociability_margin', 'normal')
 
 with col5:
     # ************************************************************************
